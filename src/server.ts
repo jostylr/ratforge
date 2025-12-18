@@ -5,9 +5,16 @@ import { layout, html } from "./templates/layout";
 import { homePage } from "./templates/pages/home";
 import { aboutPage } from "./templates/pages/about";
 import { dashboardPage } from "./templates/pages/dashboard";
+import { exercisePage } from "./templates/pages/exercise";
 import { createSession, getSessionFromRequest, createSessionCookie } from "./auth/session";
 import { requireAuth, getSessionFromToken, type AuthenticatedRequest } from "./auth/middleware";
 import { getUserIdByToken } from "./db/tokens";
+import { getExercise } from "./exercises";
+import { logExerciseStart, logExerciseAttempt } from "./db/events";
+import type { ExerciseInstance } from "./exercises/types";
+
+// Import exercises to register them
+import "./exercises";
 
 const PORT = process.env.PORT || 3000;
 
@@ -81,6 +88,95 @@ router.get("/u/:token", (req, params) => {
       "Set-Cookie": cookie,
     },
   });
+});
+
+// Store active exercise instances (in production, use Redis or similar)
+const activeInstances = new Map<string, ExerciseInstance>();
+
+// Exercise: Counting basket
+router.get("/practice/counting/basket", (req) => {
+  const session = getSessionFromRequest(req);
+  if (!session) {
+    return new Response(null, {
+      status: 302,
+      headers: { Location: "/" },
+    });
+  }
+
+  const exercise = getExercise("counting-basket");
+  if (!exercise) {
+    return html(layout({
+      title: "Exercise Not Found",
+      content: `<section class="page-section text-center"><h1>Exercise not found</h1></section>`,
+    }), 404);
+  }
+
+  // Generate new instance
+  const instance = exercise.generate();
+  activeInstances.set(instance.id, instance);
+  
+  // Log exercise start
+  logExerciseStart(session.userId, {
+    exerciseId: exercise.id,
+    params: instance.params,
+  });
+
+  return html(exercisePage(exercise, instance, session.token));
+});
+
+// API: Submit exercise answer
+router.post("/api/exercise/submit", async (req) => {
+  const session = getSessionFromRequest(req);
+  if (!session) {
+    return new Response(JSON.stringify({ error: "Unauthorized" }), {
+      status: 401,
+      headers: { "Content-Type": "application/json" },
+    });
+  }
+
+  try {
+    const body = await req.json() as { instanceId: string; exerciseId: string; answer: unknown };
+    const { instanceId, exerciseId, answer } = body;
+
+    const instance = activeInstances.get(instanceId);
+    if (!instance) {
+      return new Response(JSON.stringify({ error: "Exercise instance not found or expired" }), {
+        status: 404,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
+    const exercise = getExercise(exerciseId);
+    if (!exercise) {
+      return new Response(JSON.stringify({ error: "Exercise not found" }), {
+        status: 404,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
+    const result = exercise.validate(instance, answer);
+    
+    // Log the attempt
+    logExerciseAttempt(session.userId, {
+      exerciseId,
+      answer,
+      correct: result.correct,
+    });
+
+    // Clean up instance if correct
+    if (result.correct) {
+      activeInstances.delete(instanceId);
+    }
+
+    return new Response(JSON.stringify(result), {
+      headers: { "Content-Type": "application/json" },
+    });
+  } catch (error) {
+    return new Response(JSON.stringify({ error: "Invalid request" }), {
+      status: 400,
+      headers: { "Content-Type": "application/json" },
+    });
+  }
 });
 
 const server = serve({
