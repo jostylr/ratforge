@@ -14,8 +14,8 @@ export function layout({ title, content, pageStyles }: LayoutOptions): string {
   <link rel="stylesheet" href="/css/main.css">
   ${pageStyles ? `<style>${pageStyles}</style>` : ""}
   <script src="/js/htmx.min.js" defer></script>
+  <script src="/js/app.js"></script>
   <script src="/js/alpine.min.js" defer></script>
-  <script src="/js/app.js" defer></script>
 </head>
 <body>
   <nav class="navbar">

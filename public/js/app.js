@@ -1,24 +1,21 @@
 // RatForge - Client-side JavaScript
 
 // Alpine.js component for Kitten Basket exercise
-function kittenBasket(totalKittens, targetCount, positions) {
+window.kittenBasket = function() {
+  const params = window.exerciseParams || { totalKittens: 0, targetCount: 0, positions: [] };
   return {
-    targetCount: targetCount,
-    kittens: [],
+    targetCount: params.targetCount,
+    totalKittens: params.totalKittens,
+    kittens: params.positions.map(pos => ({
+      id: pos.id,
+      x: pos.x,
+      y: pos.y,
+      inBasket: false
+    })),
     submitted: false,
     correct: false,
     feedback: '',
     dashboardUrl: window.exerciseData?.dashboardUrl || '/',
-
-    init() {
-      // Initialize kittens from positions
-      this.kittens = positions.map(pos => ({
-        id: pos.id,
-        x: pos.x,
-        y: pos.y,
-        inBasket: false
-      }));
-    },
 
     get inBasketCount() {
       return this.kittens.filter(k => k.inBasket).length;
@@ -85,7 +82,4 @@ function kittenBasket(totalKittens, targetCount, positions) {
       }
     }
   };
-}
-
-// Make available globally for Alpine
-window.kittenBasket = kittenBasket;
+};

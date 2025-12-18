@@ -58,12 +58,16 @@ export const kittenBasketExercise: Exercise = {
 
   renderHTML(instance: ExerciseInstance): string {
     const params = instance.params as unknown as BasketParams;
-    const kittensJSON = JSON.stringify(params.kittenPositions);
     
     return `
-      <div class="exercise-container" 
-           x-data="kittenBasket(${params.totalKittens}, ${params.targetCount}, ${kittensJSON})"
-           x-init="init()">
+      <script>
+        window.exerciseParams = {
+          totalKittens: ${params.totalKittens},
+          targetCount: ${params.targetCount},
+          positions: ${JSON.stringify(params.kittenPositions)}
+        };
+      </script>
+      <div class="exercise-container" x-data="kittenBasket()">
         
         <div class="exercise-prompt">
           <h2>Put <span class="target-number" x-text="targetCount"></span> kittens in the basket!</h2>
