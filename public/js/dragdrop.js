@@ -27,15 +27,24 @@ window.DragDropManager = class DragDropManager {
   }
 
   registerItem(id, element, data = {}) {
-    const item = { element, data, selected: false, inDropZone: null };
+    const item = {
+      element,
+      data,
+      selected: false,
+      inDropZone: null,
+      handlers: {}
+    };
     this.items.set(id, item);
     
     // Mouse events
-    element.addEventListener('mousedown', (e) => this._onItemMouseDown(e, id));
-    element.addEventListener('dblclick', (e) => this._onItemDoubleClick(e, id));
+    item.handlers.mousedown = (e) => this._onItemMouseDown(e, id);
+    item.handlers.dblclick = (e) => this._onItemDoubleClick(e, id);
+    element.addEventListener('mousedown', item.handlers.mousedown);
+    element.addEventListener('dblclick', item.handlers.dblclick);
     
     // Touch events
-    element.addEventListener('touchstart', (e) => this._onItemTouchStart(e, id), { passive: false });
+    item.handlers.touchstart = (e) => this._onItemTouchStart(e, id);
+    element.addEventListener('touchstart', item.handlers.touchstart, { passive: false });
     
     return item;
   }
@@ -149,7 +158,13 @@ window.DragDropManager = class DragDropManager {
     if (e.button !== 0) return; // Only left click
     
     const item = this.items.get(id);
-    if (!item || item.inDropZone) return;
+    if (!item) return;
+    if (item.inDropZone) {
+      // Click on item in drop zone to remove it
+      this.removeItemFromDropZone(id);
+      e.preventDefault();
+      return;
+    }
     
     this.clickedWithoutDrag = true;
     this.clickedId = id;
@@ -290,10 +305,23 @@ window.DragDropManager = class DragDropManager {
     for (const [id, zone] of this.dropZones) {
       const rect = zone.element.getBoundingClientRect();
       if (x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom) {
-        return id;
+        if (this._zoneAcceptsSelection(zone)) {
+          return id;
+        }
       }
     }
     return null;
+  }
+
+  _zoneAcceptsSelection(zone) {
+    if (!zone || typeof zone.accepts !== 'function') return true;
+    for (const id of this.selectedIds) {
+      const item = this.items.get(id);
+      if (item && !zone.accepts(item)) {
+        return false;
+      }
+    }
+    return true;
   }
 
   _onMouseUp(e) {
@@ -330,6 +358,7 @@ window.DragDropManager = class DragDropManager {
     }
     
     // Handle drop
+    let didDrop = false;
     if (this.currentDropZone) {
       const zone = this.dropZones.get(this.currentDropZone);
       const droppedIds = Array.from(this.selectedIds);
@@ -344,6 +373,7 @@ window.DragDropManager = class DragDropManager {
       }
       
       this.onDrop(droppedIds, this.currentDropZone);
+      didDrop = true;
     }
     
     // Clean up
@@ -357,7 +387,9 @@ window.DragDropManager = class DragDropManager {
     this.isDragging = false;
     this.currentDropZone = null;
     document.body.classList.remove('dd-dragging');
-    this.clearSelection();
+    if (didDrop) {
+      this.clearSelection();
+    }
   }
 
   getItemsInZone(zoneId) {
@@ -375,6 +407,13 @@ window.DragDropManager = class DragDropManager {
     document.removeEventListener('mouseup', this._boundMouseUp);
     document.removeEventListener('touchmove', this._boundTouchMove);
     document.removeEventListener('touchend', this._boundTouchEnd);
+    for (const item of this.items.values()) {
+      if (item.handlers) {
+        item.element.removeEventListener('mousedown', item.handlers.mousedown);
+        item.element.removeEventListener('dblclick', item.handlers.dblclick);
+        item.element.removeEventListener('touchstart', item.handlers.touchstart);
+      }
+    }
     if (this.dragGhost) {
       this.dragGhost.remove();
     }
