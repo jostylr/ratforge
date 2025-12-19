@@ -67,21 +67,22 @@ export const kittenBasketExercise: Exercise = {
           positions: ${JSON.stringify(params.kittenPositions)}
         };
       </script>
-      <div class="exercise-container" x-data="kittenBasket()">
+      <div class="exercise-container" x-data="kittenBasket()" x-init="init()">
         
         <div class="exercise-prompt">
           <h2>Put <span class="target-number" x-text="targetCount"></span> kittens in the basket!</h2>
-          <p class="exercise-hint">Click on kittens to add them to the basket. Click again to remove.</p>
+          <p class="exercise-hint">
+            <span x-show="selectedCount === 0">Click kittens to select them, then drag to the basket.</span>
+            <span x-show="selectedCount > 0" x-text="selectedCount + ' selected — drag to basket'"></span>
+          </p>
         </div>
 
         <div class="play-area">
           <div class="kittens-area">
-            <template x-for="kitten in kittens" :key="kitten.id">
-              <button class="kitten-btn"
-                      :class="{ 'in-basket': kitten.inBasket }"
-                      :style="{ left: kitten.x + '%', top: kitten.y + '%' }"
-                      @click="toggleKitten(kitten.id)"
-                      :disabled="submitted">
+            <template x-for="kitten in kittens.filter(k => !k.inBasket)" :key="kitten.id">
+              <div class="kitten-item"
+                   :data-kitten-id="kitten.id"
+                   :style="{ left: kitten.x + '%', top: kitten.y + '%' }">
                 <svg class="kitten-icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
                   <ellipse cx="50" cy="65" rx="30" ry="25" fill="#f4a460"/>
                   <circle cx="50" cy="35" r="25" fill="#f4a460"/>
@@ -105,25 +106,45 @@ export const kittenBasketExercise: Exercise = {
                   <ellipse cx="65" cy="80" rx="8" ry="6" fill="#f4a460"/>
                   <path d="M 80 60 Q 95 55 90 75 Q 85 90 75 85" fill="#f4a460"/>
                 </svg>
-              </button>
+              </div>
             </template>
           </div>
 
-          <div class="basket-area">
-            <div class="basket">
-              <svg class="basket-icon" viewBox="0 0 120 80" xmlns="http://www.w3.org/2000/svg">
-                <path d="M 10 30 L 20 75 L 100 75 L 110 30 Z" fill="#8b4513" stroke="#5d3a1a" stroke-width="2"/>
-                <path d="M 10 30 L 110 30" stroke="#5d3a1a" stroke-width="3"/>
-                <line x1="30" y1="30" x2="35" y2="75" stroke="#5d3a1a" stroke-width="1.5"/>
-                <line x1="50" y1="30" x2="52" y2="75" stroke="#5d3a1a" stroke-width="1.5"/>
-                <line x1="70" y1="30" x2="68" y2="75" stroke="#5d3a1a" stroke-width="1.5"/>
-                <line x1="90" y1="30" x2="85" y2="75" stroke="#5d3a1a" stroke-width="1.5"/>
-                <path d="M 20 30 Q 60 0 100 30" fill="none" stroke="#8b4513" stroke-width="4"/>
+          <div class="basket-area basket-drop-zone">
+            <div class="basket-visual">
+              <svg class="basket-back" viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg">
+                <path d="M 20 40 L 35 110 L 165 110 L 180 40 Z" fill="#8b4513" stroke="#5d3a1a" stroke-width="2"/>
+                <path d="M 30 40 Q 100 10 170 40" fill="none" stroke="#6b3510" stroke-width="5"/>
               </svg>
-              <div class="basket-count">
-                <span x-text="inBasketCount"></span> kitten<span x-show="inBasketCount !== 1">s</span>
+              
+              <div class="basket-contents">
+                <template x-for="kitten in kittens.filter(k => k.inBasket)" :key="kitten.id">
+                  <div class="kitten-in-basket" 
+                       @click="removeFromBasket(kitten.id)"
+                       :title="submitted ? '' : 'Click to remove'">
+                    <svg class="kitten-icon-small" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                      <ellipse cx="50" cy="65" rx="30" ry="25" fill="#f4a460"/>
+                      <circle cx="50" cy="35" r="25" fill="#f4a460"/>
+                      <polygon points="30,20 25,0 40,15" fill="#f4a460"/>
+                      <polygon points="70,20 75,0 60,15" fill="#f4a460"/>
+                      <circle cx="40" cy="32" r="5" fill="#333"/>
+                      <circle cx="60" cy="32" r="5" fill="#333"/>
+                      <circle cx="42" cy="30" r="2" fill="#fff"/>
+                      <circle cx="62" cy="30" r="2" fill="#fff"/>
+                      <ellipse cx="50" cy="42" rx="4" ry="3" fill="#ffb6c1"/>
+                    </svg>
+                  </div>
+                </template>
               </div>
+              
+              <svg class="basket-front" viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg">
+                <path d="M 20 40 L 20 42 L 35 112 L 165 112 L 180 42 L 180 40" fill="none" stroke="#5d3a1a" stroke-width="3"/>
+                <line x1="50" y1="40" x2="58" y2="110" stroke="#5d3a1a" stroke-width="2" opacity="0.5"/>
+                <line x1="100" y1="40" x2="100" y2="110" stroke="#5d3a1a" stroke-width="2" opacity="0.5"/>
+                <line x1="150" y1="40" x2="142" y2="110" stroke="#5d3a1a" stroke-width="2" opacity="0.5"/>
+              </svg>
             </div>
+            <p class="basket-hint" x-show="inBasketCount === 0">Drop kittens here</p>
           </div>
         </div>
 
