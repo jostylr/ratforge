@@ -75,6 +75,7 @@ window.kittenBasket = function() {
       const basketEl = document.querySelector('.basket-drop-zone');
       if (basketEl) {
         this.dragManager.registerDropZone('basket', basketEl, {
+          mode: 'hybrid',
           onEnter: (count) => {
             basketEl.classList.add('basket-hover');
           },

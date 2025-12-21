@@ -330,6 +330,18 @@ li {
   border: 1px solid #fecaca;
 }
 
+/* === Drag & Drop === */
+.dd-zone-active {
+  outline: 2px dashed var(--color-success);
+  outline-offset: 4px;
+}
+
+.dd-zone-reject {
+  outline: 2px dashed var(--color-error);
+  outline-offset: 4px;
+  background: rgba(239, 68, 68, 0.08);
+}
+
 /* === Utilities === */
 .text-center { text-align: center; }
 .text-muted { color: var(--color-text-muted); }

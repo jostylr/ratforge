@@ -9,6 +9,9 @@ window.DragDropManager = class DragDropManager {
     this.isDragging = false;
     this.dragGhost = null;
     this.currentDropZone = null;
+    this.currentHoverZone = null;
+    this.currentHoverAccepted = false;
+    this.dragOriginZones = new Map();
     
     this.onSelectionChange = options.onSelectionChange || (() => {});
     this.onDrop = options.onDrop || (() => {});
@@ -53,6 +56,7 @@ window.DragDropManager = class DragDropManager {
     const zone = { 
       element, 
       accepts: options.accepts || (() => true),
+      mode: options.mode || 'drop-only',
       onEnter: options.onEnter || (() => {}),
       onLeave: options.onLeave || (() => {}),
       onDrop: options.onDrop || (() => {})
@@ -66,7 +70,7 @@ window.DragDropManager = class DragDropManager {
       this.clearSelection();
     }
     const item = this.items.get(id);
-    if (item && !item.inDropZone) {
+    if (item && this._canSelectItem(item)) {
       item.selected = true;
       item.element.classList.add('dd-selected');
       this.selectedIds.add(id);
@@ -160,10 +164,13 @@ window.DragDropManager = class DragDropManager {
     const item = this.items.get(id);
     if (!item) return;
     if (item.inDropZone) {
-      // Click on item in drop zone to remove it
-      this.removeItemFromDropZone(id);
-      e.preventDefault();
-      return;
+      const zone = this.dropZones.get(item.inDropZone);
+      if (!this._isZoneHybrid(zone)) {
+        // Click on item in drop zone to remove it
+        this.removeItemFromDropZone(id);
+        e.preventDefault();
+        return;
+      }
     }
     
     this.clickedWithoutDrag = true;
@@ -188,10 +195,13 @@ window.DragDropManager = class DragDropManager {
     if (!item) return;
     
     if (item.inDropZone) {
-      // Tap on item in drop zone to remove it
-      this.removeItemFromDropZone(id);
-      e.preventDefault();
-      return;
+      const zone = this.dropZones.get(item.inDropZone);
+      if (!this._isZoneHybrid(zone)) {
+        // Tap on item in drop zone to remove it
+        this.removeItemFromDropZone(id);
+        e.preventDefault();
+        return;
+      }
     }
     
     const touch = e.touches[0];
@@ -253,6 +263,7 @@ window.DragDropManager = class DragDropManager {
     if (this.selectedIds.size === 0) return;
     
     this.isDragging = true;
+    this.dragOriginZones = new Map();
     document.body.classList.add('dd-dragging');
     
     // Create ghost element showing count
@@ -266,6 +277,9 @@ window.DragDropManager = class DragDropManager {
       const item = this.items.get(id);
       if (item) {
         item.element.classList.add('dd-dragging-item');
+        if (item.inDropZone) {
+          this.dragOriginZones.set(id, item.inDropZone);
+        }
       }
     }
   }
@@ -278,36 +292,46 @@ window.DragDropManager = class DragDropManager {
     this.dragGhost.style.top = clientY + 'px';
     
     // Check drop zones
-    const newDropZone = this._findDropZoneAt(clientX, clientY);
-    
-    if (newDropZone !== this.currentDropZone) {
-      if (this.currentDropZone) {
-        const zone = this.dropZones.get(this.currentDropZone);
+    const hover = this._findZoneAt(clientX, clientY);
+    const nextHoverId = hover ? hover.id : null;
+    const nextHoverAccepted = hover ? hover.accepts : false;
+
+    if (nextHoverId !== this.currentHoverZone || nextHoverAccepted !== this.currentHoverAccepted) {
+      if (this.currentHoverZone) {
+        const zone = this.dropZones.get(this.currentHoverZone);
         if (zone) {
           zone.element.classList.remove('dd-zone-active');
-          zone.onLeave();
+          zone.element.classList.remove('dd-zone-reject');
+          if (this.currentHoverAccepted) {
+            zone.onLeave();
+          }
         }
       }
-      
-      this.currentDropZone = newDropZone;
-      
-      if (this.currentDropZone) {
-        const zone = this.dropZones.get(this.currentDropZone);
+
+      this.currentHoverZone = nextHoverId;
+      this.currentHoverAccepted = nextHoverAccepted;
+
+      if (this.currentHoverZone) {
+        const zone = this.dropZones.get(this.currentHoverZone);
         if (zone) {
-          zone.element.classList.add('dd-zone-active');
-          zone.onEnter(this.selectedIds.size);
+          if (this.currentHoverAccepted) {
+            zone.element.classList.add('dd-zone-active');
+            zone.onEnter(this.selectedIds.size);
+          } else {
+            zone.element.classList.add('dd-zone-reject');
+          }
         }
       }
     }
+
+    this.currentDropZone = this.currentHoverAccepted ? this.currentHoverZone : null;
   }
 
-  _findDropZoneAt(x, y) {
+  _findZoneAt(x, y) {
     for (const [id, zone] of this.dropZones) {
       const rect = zone.element.getBoundingClientRect();
       if (x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom) {
-        if (this._zoneAcceptsSelection(zone)) {
-          return id;
-        }
+        return { id, zone, accepts: this._zoneAcceptsSelection(zone) };
       }
     }
     return null;
@@ -322,6 +346,16 @@ window.DragDropManager = class DragDropManager {
       }
     }
     return true;
+  }
+
+  _isZoneHybrid(zone) {
+    return zone && zone.mode === 'hybrid';
+  }
+
+  _canSelectItem(item) {
+    if (!item.inDropZone) return true;
+    const zone = this.dropZones.get(item.inDropZone);
+    return this._isZoneHybrid(zone);
   }
 
   _onMouseUp(e) {
@@ -375,6 +409,20 @@ window.DragDropManager = class DragDropManager {
       this.onDrop(droppedIds, this.currentDropZone);
       didDrop = true;
     }
+
+    if (this.currentHoverZone) {
+      const zone = this.dropZones.get(this.currentHoverZone);
+      if (zone) {
+        zone.element.classList.remove('dd-zone-active');
+        zone.element.classList.remove('dd-zone-reject');
+      }
+    }
+
+    if (!didDrop && this.dragOriginZones.size > 0) {
+      for (const id of this.dragOriginZones.keys()) {
+        this.removeItemFromDropZone(id);
+      }
+    }
     
     // Clean up
     for (const id of this.selectedIds) {
@@ -386,6 +434,9 @@ window.DragDropManager = class DragDropManager {
     
     this.isDragging = false;
     this.currentDropZone = null;
+    this.currentHoverZone = null;
+    this.currentHoverAccepted = false;
+    this.dragOriginZones = new Map();
     document.body.classList.remove('dd-dragging');
     if (didDrop) {
       this.clearSelection();
