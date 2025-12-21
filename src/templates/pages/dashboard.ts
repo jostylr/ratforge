@@ -3,10 +3,10 @@ import { getUserProgress } from "../../db/progress";
 
 export function dashboardPage(userId: string, token: string): string {
   const progress = getUserProgress(userId);
-  
+
   const accuracyPercent = (progress.overallAccuracy * 100).toFixed(0);
   const hasActivity = progress.totalAttempts > 0;
-  
+
   return layout({
     title: "Dashboard",
     content: `
@@ -38,7 +38,7 @@ export function dashboardPage(userId: string, token: string): string {
         <section class="exercises-section">
           <h2>Exercises</h2>
           <div class="exercise-list">
-            <a href="/practice/counting/basket" class="exercise-card">
+            <a href="/practice/counting-basket" class="exercise-card">
               <div class="exercise-icon">🐱</div>
               <div class="exercise-info">
                 <h3>Kittens in a Basket</h3>
@@ -46,6 +46,17 @@ export function dashboardPage(userId: string, token: string): string {
               </div>
               <div class="exercise-status">
                 ${hasActivity ? `<span class="badge">${progress.exercises["counting-basket"]?.correct ?? 0} correct</span>` : '<span class="badge badge-new">New</span>'}
+              </div>
+            </a>
+            
+            <a href="/practice/counting-subitize" class="exercise-card">
+              <div class="exercise-icon">👀</div>
+              <div class="exercise-info">
+                <h3>Flash Subitize</h3>
+                <p>Recognize quantities at a glance without counting by ones</p>
+              </div>
+              <div class="exercise-status">
+                ${hasActivity ? `<span class="badge">${progress.exercises["counting-subitize"]?.correct ?? 0} correct</span>` : '<span class="badge badge-new">New</span>'}
               </div>
             </a>
           </div>

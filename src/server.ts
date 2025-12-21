@@ -62,7 +62,7 @@ router.get("/api/auth/logout", () => {
 router.get("/u/:token", (req, params) => {
   const token = params.token ?? "";
   const session = getSessionFromToken(token);
-  
+
   if (!session) {
     return html(
       layout({
@@ -78,10 +78,10 @@ router.get("/u/:token", (req, params) => {
       404
     );
   }
-  
+
   // Set cookie so they stay logged in
   const cookie = createSessionCookie(session.token);
-  
+
   return new Response(dashboardPage(session.userId, session.token), {
     headers: {
       "Content-Type": "text/html; charset=utf-8",
@@ -93,8 +93,8 @@ router.get("/u/:token", (req, params) => {
 // Store active exercise instances (in production, use Redis or similar)
 const activeInstances = new Map<string, ExerciseInstance>();
 
-// Exercise: Counting basket
-router.get("/practice/counting/basket", (req) => {
+// Generic Exercise Route
+router.get("/practice/:id", (req, params) => {
   const session = getSessionFromRequest(req);
   if (!session) {
     return new Response(null, {
@@ -103,18 +103,20 @@ router.get("/practice/counting/basket", (req) => {
     });
   }
 
-  const exercise = getExercise("counting-basket");
+  const exerciseId = params.id || "";
+  const exercise = getExercise(exerciseId);
+
   if (!exercise) {
     return html(layout({
       title: "Exercise Not Found",
-      content: `<section class="page-section text-center"><h1>Exercise not found</h1></section>`,
+      content: `<section class="page-section text-center"><h1>Exercise not found</h1><p>ID: ${exerciseId}</p></section>`,
     }), 404);
   }
 
   // Generate new instance
   const instance = exercise.generate();
   activeInstances.set(instance.id, instance);
-  
+
   // Log exercise start
   logExerciseStart(session.userId, {
     exerciseId: exercise.id,
@@ -155,7 +157,7 @@ router.post("/api/exercise/submit", async (req) => {
     }
 
     const result = exercise.validate(instance, answer);
-    
+
     // Log the attempt
     logExerciseAttempt(session.userId, {
       exerciseId,
