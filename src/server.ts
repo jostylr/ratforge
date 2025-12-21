@@ -126,6 +126,48 @@ router.get("/practice/:id", (req, params) => {
   return html(exercisePage(exercise, instance, session.token));
 });
 
+// Generic Worksheet Route
+router.get("/worksheet/:id", (req, params) => {
+  const exerciseId = params.id || "";
+  const exercise = getExercise(exerciseId);
+
+  if (!exercise) {
+    return html(layout({
+      title: "Exercise Not Found",
+      content: `<section class="page-section text-center"><h1>Exercise not found</h1><p>ID: ${exerciseId}</p></section>`,
+    }), 404);
+  }
+
+  if (!exercise.renderWorksheet) {
+    return html(layout({
+      title: "Worksheet Not Available",
+      content: `<section class="page-section text-center"><h1>Worksheet not available for this exercise</h1></section>`,
+    }), 404);
+  }
+
+  // Render worksheet HTML directly (no layout wrapper usually, or a special print layout)
+  // For now we return raw HTML but with a minimal wrapper if needed.
+  // The renderWorksheet returns a fragment, we should probably wrap it in a full page structure.
+
+  const content = exercise.renderWorksheet();
+
+  return new Response(`
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>${exercise.title} Worksheet</title>
+        <link rel="stylesheet" href="/css/style.css">
+    </head>
+    <body class="worksheet-body">
+        ${content}
+    </body>
+    </html>
+  `, {
+    headers: { "Content-Type": "text/html; charset=utf-8" },
+  });
+});
+
 // API: Submit exercise answer
 router.post("/api/exercise/submit", async (req) => {
   const session = getSessionFromRequest(req);

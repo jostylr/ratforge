@@ -18,10 +18,11 @@ export interface Exercise {
   title: string;
   description: string;
   difficulty: 1 | 2 | 3 | 4 | 5;
-  
+
   generate(seed?: number): ExerciseInstance;
   validate(instance: ExerciseInstance, answer: unknown): ValidationResult;
   renderHTML(instance: ExerciseInstance): string;
+  renderWorksheet?(options?: { seed?: number; count?: number }): string;
 }
 
 export function createSeed(): number {

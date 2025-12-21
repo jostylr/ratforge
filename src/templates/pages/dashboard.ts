@@ -49,16 +49,21 @@ export function dashboardPage(userId: string, token: string): string {
               </div>
             </a>
             
-            <a href="/practice/counting-subitize" class="exercise-card">
-              <div class="exercise-icon">👀</div>
-              <div class="exercise-info">
-                <h3>Flash Subitize</h3>
-                <p>Recognize quantities at a glance without counting by ones</p>
+            <div class="exercise-card">
+              <a href="/practice/counting-subitize" class="exercise-card-link">
+                <div class="exercise-left">
+                  <div class="exercise-icon">👀</div>
+                  <div class="exercise-info">
+                    <h3>Flash Subitize</h3>
+                    <p>Recognize quantities at a glance without counting by ones</p>
+                  </div>
+                </div>
+              </a>
+              <div class="exercise-actions">
+                 ${hasActivity ? `<span class="badge">${progress.exercises["counting-subitize"]?.correct ?? 0} correct</span>` : '<span class="badge badge-new">New</span>'}
+                 <a href="/worksheet/counting-subitize" class="btn btn-sm btn-outline-primary" target="_blank">Print Worksheet</a>
               </div>
-              <div class="exercise-status">
-                ${hasActivity ? `<span class="badge">${progress.exercises["counting-subitize"]?.correct ?? 0} correct</span>` : '<span class="badge badge-new">New</span>'}
-              </div>
-            </a>
+            </div>
           </div>
         </section>
 
@@ -121,25 +126,35 @@ export function dashboardPage(userId: string, token: string): string {
       .exercise-card {
         display: flex;
         align-items: center;
+        justify-content: space-between;
         gap: 1rem;
         background: var(--color-surface);
         border: 1px solid var(--color-border);
         border-radius: var(--radius-lg);
         padding: 1rem 1.5rem;
-        text-decoration: none;
-        color: inherit;
         transition: box-shadow 0.2s, border-color 0.2s;
       }
       .exercise-card:hover {
         border-color: var(--color-primary);
         box-shadow: var(--shadow-md);
+      }
+      .exercise-card-link {
         text-decoration: none;
+        color: inherit;
+        flex: 1;
+      }
+      .exercise-left {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+      }
+      .exercise-actions {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
       }
       .exercise-icon {
         font-size: 2.5rem;
-      }
-      .exercise-info {
-        flex: 1;
       }
       .exercise-info h3 {
         margin: 0;
