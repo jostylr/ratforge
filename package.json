@@ -16,6 +16,6 @@
     "typescript": "^5"
   },
   "dependencies": {
-    "ratmath": "github:jostylr/ratmath"
+    "@ratmath/core": "^0.2.0"
   }
 }
