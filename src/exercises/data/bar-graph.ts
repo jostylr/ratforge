@@ -1,93 +1,120 @@
 import type { Exercise, ExerciseInstance, ValidationResult } from "../types";
 import { createSeed, seededRandom, randomInt } from "../types";
 
-export interface AddWithin10Params {
-  num1: number;
-  num2: number;
-  sum: number;
+export interface BarGraphParams {
+  items: Array<{ name: string; value: number; color: string }>;
+  question: string;
+  correctAnswer: number;
+  questionType: 'max' | 'min' | 'specific' | 'total';
 }
 
-export const addWithin10Exercise: Exercise = {
-  id: "basic-add-10",
-  topic: "basic-operations",
-  title: "Adding to 10",
-  description: "Visual addition with objects combining together",
+const itemSets = [
+  { names: ['Apples', 'Oranges', 'Bananas', 'Grapes'], colors: ['#ef4444', '#f97316', '#eab308', '#a855f7'] },
+  { names: ['Dogs', 'Cats', 'Fish', 'Birds'], colors: ['#8b4513', '#f97316', '#3b82f6', '#22c55e'] },
+  { names: ['Red', 'Blue', 'Green', 'Yellow'], colors: ['#ef4444', '#3b82f6', '#22c55e', '#eab308'] },
+];
+
+export const barGraphExercise: Exercise = {
+  id: "data-bar-graph",
+  topic: "data",
+  title: "Reading Bar Graphs",
+  description: "Learn to read and interpret bar graphs",
   difficulty: 1,
 
   generate(seed?: number): ExerciseInstance {
     const actualSeed = seed ?? createSeed();
     const random = seededRandom(actualSeed);
     
-    const num1 = randomInt(1, 9, random);
-    const maxNum2 = 10 - num1;
-    const num2 = randomInt(1, Math.max(1, maxNum2), random);
-    const sum = num1 + num2;
+    const itemSet = itemSets[randomInt(0, itemSets.length - 1, random)]!;
+    const items = itemSet.names.map((name, i) => ({
+      name,
+      value: randomInt(1, 10, random),
+      color: itemSet.colors[i]!
+    }));
+    
+    const questionTypes: Array<'max' | 'min' | 'specific' | 'total'> = ['max', 'min', 'specific', 'total'];
+    const questionType = questionTypes[randomInt(0, questionTypes.length - 1, random)]!;
+    
+    let question = '';
+    let correctAnswer = 0;
+    
+    switch (questionType) {
+      case 'max':
+        question = 'Which item has the most?';
+        correctAnswer = Math.max(...items.map(i => i.value));
+        break;
+      case 'min':
+        question = 'Which item has the least?';
+        correctAnswer = Math.min(...items.map(i => i.value));
+        break;
+      case 'specific':
+        const targetItem = items[randomInt(0, items.length - 1, random)]!;
+        question = `How many ${targetItem.name}?`;
+        correctAnswer = targetItem.value;
+        break;
+      case 'total':
+        question = 'What is the total of all items?';
+        correctAnswer = items.reduce((sum, i) => sum + i.value, 0);
+        break;
+    }
     
     return {
       id: `${this.id}-${actualSeed}`,
       exerciseId: this.id,
       seed: actualSeed,
-      params: { num1, num2, sum } as unknown as Record<string, unknown>,
-      correctAnswer: sum,
+      params: { items, question, correctAnswer, questionType } as unknown as Record<string, unknown>,
+      correctAnswer,
       createdAt: new Date().toISOString(),
     };
   },
 
   validate(instance: ExerciseInstance, answer: unknown): ValidationResult {
-    const params = instance.params as unknown as AddWithin10Params;
+    const params = instance.params as unknown as BarGraphParams;
     const answerNum = typeof answer === "number" ? answer : parseInt(String(answer), 10);
     
-    if (answerNum === params.sum) {
-      return { correct: true, feedback: `Correct! ${params.num1} + ${params.num2} = ${params.sum} 🎉` };
+    if (answerNum === params.correctAnswer) {
+      return { correct: true, feedback: `Correct! The answer is ${params.correctAnswer}. 🎉` };
     }
     
-    return { correct: false, feedback: `Not quite. Try counting all the dots together.` };
+    return { correct: false, feedback: `Not quite. Look carefully at the heights of the bars.` };
   },
 
   renderHTML(instance: ExerciseInstance): string {
-    const params = instance.params as unknown as AddWithin10Params;
+    const params = instance.params as unknown as BarGraphParams;
+    const maxValue = Math.max(...params.items.map(i => i.value));
     
-    let dots1 = '';
-    for (let i = 0; i < params.num1; i++) {
-      dots1 += `<span class="dot blue">●</span>`;
-    }
-    
-    let dots2 = '';
-    for (let i = 0; i < params.num2; i++) {
-      dots2 += `<span class="dot red">●</span>`;
-    }
+    const bars = params.items.map(item => `
+      <div class="bar-column">
+        <div class="bar" style="height: ${(item.value / maxValue) * 100}%; background: ${item.color};">
+          <span class="bar-value">${item.value}</span>
+        </div>
+        <span class="bar-label">${item.name}</span>
+      </div>
+    `).join('');
     
     return `
-      <div class="exercise-container" x-data="addExercise()" x-init="$nextTick(() => $refs.mainInput?.focus())">
+      <div class="exercise-container" x-data="barGraphExercise()" x-init="$nextTick(() => document.querySelector('.answer-input')?.focus())">
         <div class="exercise-prompt">
-          <h2>${params.num1} + ${params.num2} = ?</h2>
+          <h2>${params.question}</h2>
         </div>
         
-        <div class="addition-visual">
-          <div class="addend-group">
-            <div class="dots-row">${dots1}</div>
-            <span class="addend-label">${params.num1}</span>
+        <div class="graph-container">
+          <div class="y-axis">
+            ${[...Array(11)].map((_, i) => `<span class="y-label">${10 - i}</span>`).join('')}
           </div>
-          
-          <div class="plus-sign">+</div>
-          
-          <div class="addend-group">
-            <div class="dots-row">${dots2}</div>
-            <span class="addend-label">${params.num2}</span>
+          <div class="bars-area">
+            ${bars}
           </div>
-          
-          <div class="equals-sign">=</div>
-          
-          <div class="answer-box">
-            <input type="number" 
-                   x-model="answer" 
-                   x-ref="mainInput"
-                   min="0" 
-                   max="20"
-                   class="sum-input"
-                   :disabled="submitted"
-                   @keyup.enter="checkAnswer()">
-          </div>
+        </div>
+        
+        <div class="answer-section">
+          <input type="number" 
+                 x-model="answer" 
+                 min="0" 
+                 max="100"
+                 class="answer-input"
+                 :disabled="submitted"
+                 @keyup.enter="checkAnswer()">
         </div>
         
         <div class="numpad-section">
@@ -129,7 +156,7 @@ export const addWithin10Exercise: Exercise = {
             <button class="btn btn-primary" @click="tryAgain()" x-show="!correct" x-ref="tryAgainBtn">
               Try Again
             </button>
-            <a href="/practice/basic-add-10" class="btn btn-primary" x-show="correct" x-ref="nextBtn">
+            <a href="/practice/data-bar-graph" class="btn btn-primary" x-show="correct" x-ref="nextBtn">
               Next Exercise
             </a>
             <a :href="dashboardUrl" class="btn btn-secondary">
@@ -140,50 +167,75 @@ export const addWithin10Exercise: Exercise = {
       </div>
       
       <style>
-        .addition-visual {
+        .graph-container {
           display: flex;
-          align-items: center;
-          justify-content: center;
-          gap: 1rem;
-          padding: 2rem;
+          gap: 0.5rem;
+          padding: 1.5rem;
           background: var(--color-bg);
           border-radius: var(--radius-lg);
           margin-bottom: 1.5rem;
-          flex-wrap: wrap;
+          min-height: 250px;
         }
-        .addend-group {
-          text-align: center;
-        }
-        .dots-row {
+        .y-axis {
           display: flex;
-          gap: 0.25rem;
-          margin-bottom: 0.5rem;
-          min-height: 40px;
-          align-items: center;
+          flex-direction: column;
+          justify-content: space-between;
+          padding-right: 0.5rem;
+          border-right: 2px solid var(--color-border);
         }
-        .dot {
-          font-size: 2rem;
-        }
-        .dot.blue { color: #3b82f6; }
-        .dot.red { color: #ef4444; }
-        .addend-label {
-          font-size: 1.5rem;
-          font-weight: 600;
-        }
-        .plus-sign, .equals-sign {
-          font-size: 2rem;
-          font-weight: 700;
+        .y-label {
+          font-size: 0.75rem;
           color: var(--color-text-muted);
         }
-        .sum-input {
-          width: 80px;
-          padding: 0.5rem;
+        .bars-area {
+          flex: 1;
+          display: flex;
+          justify-content: space-around;
+          align-items: flex-end;
+          padding-bottom: 1.5rem;
+          height: 200px;
+        }
+        .bar-column {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 0.5rem;
+          flex: 1;
+          height: 100%;
+          justify-content: flex-end;
+        }
+        .bar {
+          width: 50px;
+          border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+          display: flex;
+          align-items: flex-start;
+          justify-content: center;
+          min-height: 25px;
+        }
+        .bar-value {
+          color: white;
+          font-weight: 600;
+          font-size: 0.875rem;
+          padding-top: 0.25rem;
+        }
+        .bar-label {
+          font-size: 0.875rem;
+          font-weight: 500;
+          text-align: center;
+        }
+        .answer-section {
+          text-align: center;
+          margin-bottom: 1rem;
+        }
+        .answer-input {
+          width: 100px;
+          padding: 0.75rem;
           font-size: 2rem;
           text-align: center;
           border: 2px solid var(--color-border);
           border-radius: var(--radius-md);
         }
-        .sum-input:focus {
+        .answer-input:focus {
           outline: none;
           border-color: var(--color-primary);
         }
@@ -234,7 +286,7 @@ export const addWithin10Exercise: Exercise = {
       </style>
       
       <script>
-        function addExercise() {
+        function barGraphExercise() {
           return {
             answer: '',
             showNumpad: true,

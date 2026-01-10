@@ -123,7 +123,7 @@ export const missingNumberExercise: Exercise = {
           </div>
           
           <div class="next-actions" x-show="submitted">
-            <button class="btn btn-primary" @click="tryAgain()" x-show="!correct">
+            <button class="btn btn-primary" @click="tryAgain()" x-show="!correct" x-ref="tryAgainBtn">
               Try Again
             </button>
             <a href="/practice/algebra-missing" class="btn btn-primary" x-show="correct" x-ref="nextBtn">
@@ -201,7 +201,9 @@ export const missingNumberExercise: Exercise = {
               this.feedback = result.feedback;
               this.submitted = true;
               if (result.correct) {
-                this.$nextTick(() => this.$refs.nextBtn?.focus());
+                setTimeout(() => this.$refs.nextBtn?.focus(), 50);
+              } else {
+                setTimeout(() => this.$refs.tryAgainBtn?.focus(), 50);
               }
             },
             

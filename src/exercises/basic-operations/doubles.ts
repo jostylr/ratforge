@@ -1,93 +1,108 @@
 import type { Exercise, ExerciseInstance, ValidationResult } from "../types";
 import { createSeed, seededRandom, randomInt } from "../types";
 
-export interface AddWithin10Params {
-  num1: number;
-  num2: number;
-  sum: number;
+export interface DoublesParams {
+  number: number;
+  questionType: 'double' | 'near-double';
+  expression: string;
+  answer: number;
 }
 
-export const addWithin10Exercise: Exercise = {
-  id: "basic-add-10",
+export const doublesExercise: Exercise = {
+  id: "basic-doubles",
   topic: "basic-operations",
-  title: "Adding to 10",
-  description: "Visual addition with objects combining together",
+  title: "Doubles & Near Doubles",
+  description: "Master doubles facts and use them to solve near-doubles",
   difficulty: 1,
 
   generate(seed?: number): ExerciseInstance {
     const actualSeed = seed ?? createSeed();
     const random = seededRandom(actualSeed);
     
-    const num1 = randomInt(1, 9, random);
-    const maxNum2 = 10 - num1;
-    const num2 = randomInt(1, Math.max(1, maxNum2), random);
-    const sum = num1 + num2;
+    const number = randomInt(1, 10, random);
+    const isDouble = random() > 0.4; // 60% doubles, 40% near-doubles
+    
+    let expression: string;
+    let answer: number;
+    let questionType: 'double' | 'near-double';
+    
+    if (isDouble) {
+      expression = `${number} + ${number}`;
+      answer = number * 2;
+      questionType = 'double';
+    } else {
+      // Near double: n + (n+1) or n + (n-1)
+      const addOne = random() > 0.5;
+      if (addOne) {
+        expression = `${number} + ${number + 1}`;
+        answer = number * 2 + 1;
+      } else {
+        expression = `${number + 1} + ${number}`;
+        answer = number * 2 + 1;
+      }
+      questionType = 'near-double';
+    }
     
     return {
       id: `${this.id}-${actualSeed}`,
       exerciseId: this.id,
       seed: actualSeed,
-      params: { num1, num2, sum } as unknown as Record<string, unknown>,
-      correctAnswer: sum,
+      params: { number, questionType, expression, answer } as unknown as Record<string, unknown>,
+      correctAnswer: answer,
       createdAt: new Date().toISOString(),
     };
   },
 
   validate(instance: ExerciseInstance, answer: unknown): ValidationResult {
-    const params = instance.params as unknown as AddWithin10Params;
+    const params = instance.params as unknown as DoublesParams;
     const answerNum = typeof answer === "number" ? answer : parseInt(String(answer), 10);
     
-    if (answerNum === params.sum) {
-      return { correct: true, feedback: `Correct! ${params.num1} + ${params.num2} = ${params.sum} 🎉` };
+    if (answerNum === params.answer) {
+      const hint = params.questionType === 'double' 
+        ? `${params.number} + ${params.number} = ${params.answer}` 
+        : `Think: ${params.number} + ${params.number} = ${params.number * 2}, then add 1 more!`;
+      return { correct: true, feedback: `Correct! ${hint} 🎉` };
     }
     
-    return { correct: false, feedback: `Not quite. Try counting all the dots together.` };
+    return { correct: false, feedback: params.questionType === 'double' 
+      ? `Not quite. What is ${params.number} doubled?` 
+      : `Think about the doubles fact first, then adjust.` };
   },
 
   renderHTML(instance: ExerciseInstance): string {
-    const params = instance.params as unknown as AddWithin10Params;
+    const params = instance.params as unknown as DoublesParams;
     
-    let dots1 = '';
-    for (let i = 0; i < params.num1; i++) {
-      dots1 += `<span class="dot blue">●</span>`;
-    }
-    
-    let dots2 = '';
-    for (let i = 0; i < params.num2; i++) {
-      dots2 += `<span class="dot red">●</span>`;
-    }
+    // Visual representation with dice or dots
+    const dots1 = Array(params.number).fill('●').join(' ');
+    const dots2 = params.questionType === 'double' 
+      ? Array(params.number).fill('●').join(' ')
+      : Array(params.number + 1).fill('●').join(' ');
     
     return `
-      <div class="exercise-container" x-data="addExercise()" x-init="$nextTick(() => $refs.mainInput?.focus())">
+      <div class="exercise-container" x-data="doublesExercise()" x-init="$nextTick(() => document.querySelector('.answer-input')?.focus())">
         <div class="exercise-prompt">
-          <h2>${params.num1} + ${params.num2} = ?</h2>
+          <h2>${params.expression} = ?</h2>
+          <p class="exercise-hint">${params.questionType === 'double' ? 'Doubles fact!' : 'Near doubles - use the doubles fact to help!'}</p>
         </div>
         
-        <div class="addition-visual">
-          <div class="addend-group">
-            <div class="dots-row">${dots1}</div>
-            <span class="addend-label">${params.num1}</span>
+        <div class="visual-section">
+          <div class="dot-group">
+            <div class="dots">${dots1}</div>
           </div>
-          
-          <div class="plus-sign">+</div>
-          
-          <div class="addend-group">
-            <div class="dots-row">${dots2}</div>
-            <span class="addend-label">${params.num2}</span>
+          <span class="plus-sign">+</span>
+          <div class="dot-group">
+            <div class="dots">${dots2}</div>
           </div>
-          
-          <div class="equals-sign">=</div>
-          
-          <div class="answer-box">
-            <input type="number" 
-                   x-model="answer" 
-                   x-ref="mainInput"
-                   min="0" 
-                   max="20"
-                   class="sum-input"
-                   :disabled="submitted"
-                   @keyup.enter="checkAnswer()">
-          </div>
+        </div>
+        
+        <div class="answer-section">
+          <input type="number" 
+                 x-model="answer" 
+                 min="0" 
+                 max="30"
+                 class="answer-input"
+                 :disabled="submitted"
+                 @keyup.enter="checkAnswer()">
         </div>
         
         <div class="numpad-section">
@@ -129,7 +144,7 @@ export const addWithin10Exercise: Exercise = {
             <button class="btn btn-primary" @click="tryAgain()" x-show="!correct" x-ref="tryAgainBtn">
               Try Again
             </button>
-            <a href="/practice/basic-add-10" class="btn btn-primary" x-show="correct" x-ref="nextBtn">
+            <a href="/practice/basic-doubles" class="btn btn-primary" x-show="correct" x-ref="nextBtn">
               Next Exercise
             </a>
             <a :href="dashboardUrl" class="btn btn-secondary">
@@ -140,50 +155,45 @@ export const addWithin10Exercise: Exercise = {
       </div>
       
       <style>
-        .addition-visual {
+        .visual-section {
           display: flex;
           align-items: center;
           justify-content: center;
-          gap: 1rem;
+          gap: 1.5rem;
           padding: 2rem;
           background: var(--color-bg);
           border-radius: var(--radius-lg);
           margin-bottom: 1.5rem;
-          flex-wrap: wrap;
         }
-        .addend-group {
-          text-align: center;
+        .dot-group {
+          background: var(--color-surface);
+          padding: 1rem;
+          border-radius: var(--radius-md);
+          border: 2px solid var(--color-border);
         }
-        .dots-row {
-          display: flex;
-          gap: 0.25rem;
-          margin-bottom: 0.5rem;
-          min-height: 40px;
-          align-items: center;
-        }
-        .dot {
-          font-size: 2rem;
-        }
-        .dot.blue { color: #3b82f6; }
-        .dot.red { color: #ef4444; }
-        .addend-label {
+        .dots {
           font-size: 1.5rem;
-          font-weight: 600;
+          color: var(--color-primary);
+          letter-spacing: 0.25rem;
         }
-        .plus-sign, .equals-sign {
+        .plus-sign {
           font-size: 2rem;
-          font-weight: 700;
+          font-weight: bold;
           color: var(--color-text-muted);
         }
-        .sum-input {
-          width: 80px;
-          padding: 0.5rem;
+        .answer-section {
+          text-align: center;
+          margin-bottom: 1rem;
+        }
+        .answer-input {
+          width: 100px;
+          padding: 0.75rem;
           font-size: 2rem;
           text-align: center;
           border: 2px solid var(--color-border);
           border-radius: var(--radius-md);
         }
-        .sum-input:focus {
+        .answer-input:focus {
           outline: none;
           border-color: var(--color-primary);
         }
@@ -234,7 +244,7 @@ export const addWithin10Exercise: Exercise = {
       </style>
       
       <script>
-        function addExercise() {
+        function doublesExercise() {
           return {
             answer: '',
             showNumpad: true,
