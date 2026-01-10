@@ -293,6 +293,7 @@ export const sharingExercise: Exercise = {
               this.submitted = false;
               this.feedback = '';
               this.answer = '';
+              setTimeout(() => this.$refs.mainInput?.focus(), 50);
             }
           };
         }

@@ -145,10 +145,13 @@ export const lengthExercise: Exercise = {
           </div>
           
           <div class="next-actions" x-show="submitted">
-            <button class="btn btn-primary" @click="tryAgain()" x-show="!correct" x-ref="tryAgainBtn">
+            <button class="btn btn-primary" @click="tryAgain()" x-show="!correct && !givenUp" x-ref="tryAgainBtn">
               Try Again
             </button>
-            <a href="/practice/measure-length" class="btn btn-primary" x-show="correct" x-ref="nextBtn">
+            <button class="btn btn-warning" @click="giveUp()" x-show="!correct && !givenUp && attempts >= 3">
+              Give Up
+            </button>
+            <a href="/practice/measure-length" class="btn btn-primary" x-show="correct || givenUp" x-ref="nextBtn">
               Next Exercise
             </a>
             <a :href="dashboardUrl" class="btn btn-secondary">
@@ -294,6 +297,9 @@ export const lengthExercise: Exercise = {
             submitted: false,
             correct: false,
             feedback: '',
+            attempts: 0,
+            givenUp: false,
+            correctAnswer: window.exerciseData?.correctAnswer || '',
             dashboardUrl: window.exerciseData?.dashboardUrl || '/',
             
             async checkAnswer() {
@@ -313,6 +319,7 @@ export const lengthExercise: Exercise = {
               this.correct = result.correct;
               this.feedback = result.feedback;
               this.submitted = true;
+              this.attempts++;
               if (result.correct) {
                 setTimeout(() => this.$refs.nextBtn?.focus(), 50);
               } else {
@@ -324,6 +331,13 @@ export const lengthExercise: Exercise = {
               this.submitted = false;
               this.feedback = '';
               this.answer = '';
+              setTimeout(() => document.querySelector('.answer-input')?.focus(), 50);
+            },
+            
+            giveUp() {
+              this.givenUp = true;
+              this.feedback = 'The answer was: ' + this.correctAnswer;
+              setTimeout(() => this.$refs.nextBtn?.focus(), 50);
             }
           };
         }

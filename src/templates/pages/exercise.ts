@@ -30,7 +30,8 @@ export function exercisePage(
         window.exerciseData = {
           instanceId: "${instance.id}",
           exerciseId: "${instance.exerciseId}",
-          dashboardUrl: "/u/${token}"
+          dashboardUrl: "/u/${token}",
+          correctAnswer: ${JSON.stringify(instance.correctAnswer)}
         };
       </script>
     `,

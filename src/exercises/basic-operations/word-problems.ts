@@ -1,100 +1,103 @@
 import type { Exercise, ExerciseInstance, ValidationResult } from "../types";
 import { createSeed, seededRandom, randomInt } from "../types";
 
-export interface ObjectCountParams {
-  count: number;
-  objectType: string;
-  objectEmoji: string;
+export interface AddSubWordProblemParams {
+  scenario: string;
+  num1: number;
+  num2: number;
+  answer: number;
+  operation: 'add' | 'subtract';
 }
 
-const objectTypes = [
-  { name: 'apples', emoji: '🍎' },
-  { name: 'stars', emoji: '⭐' },
-  { name: 'hearts', emoji: '❤️' },
-  { name: 'balls', emoji: '🔵' },
-  { name: 'flowers', emoji: '🌸' },
-  { name: 'fish', emoji: '🐟' },
-  { name: 'butterflies', emoji: '🦋' },
-  { name: 'birds', emoji: '🐦' },
+const addScenarios = [
+  { template: 'Sam has {num1} apples. Mom gives him {num2} more. How many apples does Sam have now?', item: 'apples' },
+  { template: 'There are {num1} birds in a tree. {num2} more birds land. How many birds are there now?', item: 'birds' },
+  { template: '{num1} kids are playing. {num2} more kids join them. How many kids are playing now?', item: 'kids' },
+  { template: 'Lily found {num1} shells. Then she found {num2} more. How many shells does she have?', item: 'shells' },
 ];
 
-export const countObjectsExercise: Exercise = {
-  id: "counting-objects",
-  topic: "counting",
-  title: "Object Counting",
-  description: "Count groups of objects accurately",
+const subScenarios = [
+  { template: 'Tom has {num1} cookies. He eats {num2}. How many cookies are left?', item: 'cookies' },
+  { template: 'There are {num1} balloons. {num2} pop. How many balloons are left?', item: 'balloons' },
+  { template: '{num1} butterflies are in the garden. {num2} fly away. How many are left?', item: 'butterflies' },
+  { template: 'Emma has {num1} stickers. She gives {num2} to her friend. How many does she have now?', item: 'stickers' },
+];
+
+export const addSubWordProblemExercise: Exercise = {
+  id: "basic-word-problems",
+  topic: "basic-operations",
+  title: "Addition & Subtraction Word Problems",
+  description: "Solve simple addition and subtraction story problems",
   difficulty: 1,
 
   generate(seed?: number): ExerciseInstance {
     const actualSeed = seed ?? createSeed();
     const random = seededRandom(actualSeed);
     
-    const count = randomInt(3, 15, random);
-    const objType = objectTypes[randomInt(0, objectTypes.length - 1, random)]!;
+    const operation = random() > 0.5 ? 'add' : 'subtract';
+    const scenarios = operation === 'add' ? addScenarios : subScenarios;
+    const scenarioIndex = randomInt(0, scenarios.length - 1, random);
+    const scenario = scenarios[scenarioIndex]!;
+    
+    let num1: number, num2: number, answer: number;
+    
+    if (operation === 'add') {
+      num1 = randomInt(2, 8, random);
+      num2 = randomInt(1, 9 - num1, random);
+      answer = num1 + num2;
+    } else {
+      num1 = randomInt(5, 10, random);
+      num2 = randomInt(1, num1 - 1, random);
+      answer = num1 - num2;
+    }
+    
+    const problemText = scenario.template
+      .replace('{num1}', String(num1))
+      .replace('{num2}', String(num2));
     
     return {
       id: `${this.id}-${actualSeed}`,
       exerciseId: this.id,
       seed: actualSeed,
-      params: { 
-        count, 
-        objectType: objType.name,
-        objectEmoji: objType.emoji
-      } as unknown as Record<string, unknown>,
-      correctAnswer: count,
+      params: { scenario: problemText, num1, num2, answer, operation } as unknown as Record<string, unknown>,
+      correctAnswer: answer,
       createdAt: new Date().toISOString(),
     };
   },
 
   validate(instance: ExerciseInstance, answer: unknown): ValidationResult {
-    const params = instance.params as unknown as ObjectCountParams;
+    const params = instance.params as unknown as AddSubWordProblemParams;
     const answerNum = typeof answer === "number" ? answer : parseInt(String(answer), 10);
     
-    if (answerNum === params.count) {
-      return { correct: true, feedback: `Yes! There are exactly ${params.count} ${params.objectType}! 🎉` };
+    if (answerNum === params.answer) {
+      const opSymbol = params.operation === 'add' ? '+' : '-';
+      return { correct: true, feedback: `Correct! ${params.num1} ${opSymbol} ${params.num2} = ${params.answer} 🎉` };
     }
     
-    const diff = Math.abs(answerNum - params.count);
-    if (diff === 1) {
-      return { correct: false, feedback: "So close! Count one more time carefully." };
-    }
-    
-    return { correct: false, feedback: `Not quite. Try counting each ${params.objectType.slice(0, -1)} one by one.` };
+    return { correct: false, feedback: `Not quite. Is this adding or taking away? Try again!` };
   },
 
   renderHTML(instance: ExerciseInstance): string {
-    const params = instance.params as unknown as ObjectCountParams;
-    
-    let objects = '';
-    for (let i = 0; i < params.count; i++) {
-      objects += `<span class="count-object" data-index="${i}">${params.objectEmoji}</span>`;
-    }
+    const params = instance.params as unknown as AddSubWordProblemParams;
     
     return `
-      <div class="exercise-container" x-data="countObjects()" x-init="init()">
+      <div class="exercise-container" x-data="wordProblemExercise()" x-init="$nextTick(() => document.querySelector('.answer-input')?.focus())">
         <div class="exercise-prompt">
-          <h2>Count the ${params.objectType}!</h2>
-          <p class="exercise-hint">Click each one as you count, then enter your answer.</p>
+          <h2>Solve the Problem</h2>
         </div>
         
-        <div class="objects-area">
-          <div class="objects-grid">
-            ${objects}
-          </div>
+        <div class="problem-card">
+          <p class="problem-text">${params.scenario}</p>
         </div>
         
         <div class="answer-section">
-          <label>How many ${params.objectType} are there?</label>
-          <div class="number-input-group">
-            <input type="number" 
-                   x-model="answer" 
-                   x-ref="mainInput"
-                   min="1" 
-                   max="20" 
-                   class="answer-input"
-                   :disabled="submitted"
-                   @keyup.enter="checkAnswer()">
-          </div>
+          <input type="number" 
+                 x-model="answer" 
+                 min="0" 
+                 max="20"
+                 class="answer-input"
+                 :disabled="submitted"
+                 @keyup.enter="checkAnswer()">
         </div>
         
         <div class="numpad-section">
@@ -133,10 +136,13 @@ export const countObjectsExercise: Exercise = {
           </div>
           
           <div class="next-actions" x-show="submitted">
-            <button class="btn btn-primary" @click="tryAgain()" x-show="!correct" x-ref="tryAgainBtn">
+            <button class="btn btn-primary" @click="tryAgain()" x-show="!correct && !givenUp" x-ref="tryAgainBtn">
               Try Again
             </button>
-            <a href="/practice/counting-objects" class="btn btn-primary" x-show="correct" x-ref="nextBtn">
+            <button class="btn btn-warning" @click="giveUp()" x-show="!correct && !givenUp && attempts >= 3">
+              Give Up
+            </button>
+            <a href="/practice/basic-word-problems" class="btn btn-primary" x-show="correct || givenUp" x-ref="nextBtn">
               Next Exercise
             </a>
             <a :href="dashboardUrl" class="btn btn-secondary">
@@ -147,45 +153,21 @@ export const countObjectsExercise: Exercise = {
       </div>
       
       <style>
-        .objects-area {
+        .problem-card {
           padding: 2rem;
           background: var(--color-bg);
           border-radius: var(--radius-lg);
           margin-bottom: 1.5rem;
+          text-align: center;
         }
-        .objects-grid {
-          display: flex;
-          flex-wrap: wrap;
-          justify-content: center;
-          gap: 0.75rem;
-          max-width: 400px;
-          margin: 0 auto;
-        }
-        .count-object {
-          font-size: 2.5rem;
-          cursor: pointer;
-          transition: transform 0.2s;
-          user-select: none;
-        }
-        .count-object:hover {
-          transform: scale(1.2);
-        }
-        .count-object.counted {
-          opacity: 0.5;
-          transform: scale(0.9);
+        .problem-text {
+          font-size: 1.25rem;
+          line-height: 1.6;
+          margin: 0;
         }
         .answer-section {
           text-align: center;
-          margin-bottom: 1.5rem;
-        }
-        .answer-section label {
-          display: block;
-          margin-bottom: 0.5rem;
-          font-weight: 500;
-        }
-        .number-input-group {
-          display: flex;
-          justify-content: center;
+          margin-bottom: 1rem;
         }
         .answer-input {
           width: 100px;
@@ -246,23 +228,17 @@ export const countObjectsExercise: Exercise = {
       </style>
       
       <script>
-        function countObjects() {
+        function wordProblemExercise() {
           return {
             answer: '',
             showNumpad: true,
             submitted: false,
             correct: false,
             feedback: '',
+            attempts: 0,
+            givenUp: false,
+            correctAnswer: window.exerciseData?.correctAnswer || '',
             dashboardUrl: window.exerciseData?.dashboardUrl || '/',
-            
-            init() {
-              this.$nextTick(() => this.$refs.mainInput?.focus());
-              document.querySelectorAll('.count-object').forEach(obj => {
-                obj.addEventListener('click', () => {
-                  obj.classList.toggle('counted');
-                });
-              });
-            },
             
             async checkAnswer() {
               if (!this.answer) return;
@@ -281,6 +257,7 @@ export const countObjectsExercise: Exercise = {
               this.correct = result.correct;
               this.feedback = result.feedback;
               this.submitted = true;
+              this.attempts++;
               if (result.correct) {
                 setTimeout(() => this.$refs.nextBtn?.focus(), 50);
               } else {
@@ -291,10 +268,14 @@ export const countObjectsExercise: Exercise = {
             tryAgain() {
               this.submitted = false;
               this.feedback = '';
-              document.querySelectorAll('.count-object.counted').forEach(obj => {
-                obj.classList.remove('counted');
-              });
-              setTimeout(() => this.$refs.mainInput?.focus(), 50);
+              this.answer = '';
+              setTimeout(() => document.querySelector('.answer-input')?.focus(), 50);
+            },
+            
+            giveUp() {
+              this.givenUp = true;
+              this.feedback = 'The answer was: ' + this.correctAnswer;
+              setTimeout(() => this.$refs.nextBtn?.focus(), 50);
             }
           };
         }

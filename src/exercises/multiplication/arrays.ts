@@ -262,6 +262,7 @@ export const arraysExercise: Exercise = {
               this.submitted = false;
               this.feedback = '';
               this.answer = '';
+              setTimeout(() => document.querySelector('.answer-input')?.focus(), 50);
             }
           };
         }

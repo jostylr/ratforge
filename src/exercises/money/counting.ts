@@ -222,6 +222,7 @@ export const moneyCountingExercise: Exercise = {
               this.submitted = false;
               this.feedback = '';
               this.answer = '';
+              setTimeout(() => document.querySelector('.money-input')?.focus(), 50);
             }
           };
         }

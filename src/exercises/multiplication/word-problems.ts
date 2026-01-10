@@ -1,100 +1,99 @@
 import type { Exercise, ExerciseInstance, ValidationResult } from "../types";
 import { createSeed, seededRandom, randomInt } from "../types";
 
-export interface ObjectCountParams {
-  count: number;
-  objectType: string;
-  objectEmoji: string;
+export interface MultWordProblemParams {
+  scenario: string;
+  num1: number;
+  num2: number;
+  product: number;
+  itemName: string;
+  groupName: string;
 }
 
-const objectTypes = [
-  { name: 'apples', emoji: '🍎' },
-  { name: 'stars', emoji: '⭐' },
-  { name: 'hearts', emoji: '❤️' },
-  { name: 'balls', emoji: '🔵' },
-  { name: 'flowers', emoji: '🌸' },
-  { name: 'fish', emoji: '🐟' },
-  { name: 'butterflies', emoji: '🦋' },
-  { name: 'birds', emoji: '🐦' },
+const scenarios = [
+  { template: 'There are {num1} bags with {num2} {item} in each bag. How many {item} are there in total?', items: ['apples', 'oranges', 'candies', 'marbles'], groups: 'bags' },
+  { template: '{num1} friends each have {num2} {item}. How many {item} do they have altogether?', items: ['stickers', 'pencils', 'toys', 'books'], groups: 'friends' },
+  { template: 'A parking lot has {num1} rows with {num2} {item} in each row. How many {item} are there?', items: ['cars', 'bikes', 'scooters'], groups: 'rows' },
+  { template: 'There are {num1} boxes. Each box has {num2} {item}. How many {item} in all?', items: ['crayons', 'cookies', 'balls'], groups: 'boxes' },
+  { template: '{num1} teams are playing. Each team has {num2} {item}. How many {item} total?', items: ['players', 'uniforms', 'water bottles'], groups: 'teams' },
 ];
 
-export const countObjectsExercise: Exercise = {
-  id: "counting-objects",
-  topic: "counting",
-  title: "Object Counting",
-  description: "Count groups of objects accurately",
-  difficulty: 1,
+export const multWordProblemExercise: Exercise = {
+  id: "mult-word-problems",
+  topic: "multiplication",
+  title: "Multiplication Word Problems",
+  description: "Solve real-world multiplication problems",
+  difficulty: 2,
 
   generate(seed?: number): ExerciseInstance {
     const actualSeed = seed ?? createSeed();
     const random = seededRandom(actualSeed);
     
-    const count = randomInt(3, 15, random);
-    const objType = objectTypes[randomInt(0, objectTypes.length - 1, random)]!;
+    const scenarioIndex = randomInt(0, scenarios.length - 1, random);
+    const scenario = scenarios[scenarioIndex]!;
+    const itemIndex = randomInt(0, scenario.items.length - 1, random);
+    const itemName = scenario.items[itemIndex]!;
+    
+    const num1 = randomInt(2, 6, random);
+    const num2 = randomInt(2, 9, random);
+    const product = num1 * num2;
+    
+    const problemText = scenario.template
+      .replace('{num1}', String(num1))
+      .replace('{num2}', String(num2))
+      .replace(/{item}/g, itemName);
     
     return {
       id: `${this.id}-${actualSeed}`,
       exerciseId: this.id,
       seed: actualSeed,
       params: { 
-        count, 
-        objectType: objType.name,
-        objectEmoji: objType.emoji
+        scenario: problemText, 
+        num1, 
+        num2, 
+        product,
+        itemName,
+        groupName: scenario.groups
       } as unknown as Record<string, unknown>,
-      correctAnswer: count,
+      correctAnswer: product,
       createdAt: new Date().toISOString(),
     };
   },
 
   validate(instance: ExerciseInstance, answer: unknown): ValidationResult {
-    const params = instance.params as unknown as ObjectCountParams;
+    const params = instance.params as unknown as MultWordProblemParams;
     const answerNum = typeof answer === "number" ? answer : parseInt(String(answer), 10);
     
-    if (answerNum === params.count) {
-      return { correct: true, feedback: `Yes! There are exactly ${params.count} ${params.objectType}! 🎉` };
+    if (answerNum === params.product) {
+      return { correct: true, feedback: `Correct! ${params.num1} × ${params.num2} = ${params.product} ${params.itemName}! 🎉` };
     }
     
-    const diff = Math.abs(answerNum - params.count);
-    if (diff === 1) {
-      return { correct: false, feedback: "So close! Count one more time carefully." };
-    }
-    
-    return { correct: false, feedback: `Not quite. Try counting each ${params.objectType.slice(0, -1)} one by one.` };
+    return { correct: false, feedback: `Not quite. Think: ${params.num1} groups of ${params.num2}. What multiplication fact helps?` };
   },
 
   renderHTML(instance: ExerciseInstance): string {
-    const params = instance.params as unknown as ObjectCountParams;
-    
-    let objects = '';
-    for (let i = 0; i < params.count; i++) {
-      objects += `<span class="count-object" data-index="${i}">${params.objectEmoji}</span>`;
-    }
+    const params = instance.params as unknown as MultWordProblemParams;
     
     return `
-      <div class="exercise-container" x-data="countObjects()" x-init="init()">
+      <div class="exercise-container" x-data="multWordProblemExercise()" x-init="$nextTick(() => document.querySelector('.answer-input')?.focus())">
         <div class="exercise-prompt">
-          <h2>Count the ${params.objectType}!</h2>
-          <p class="exercise-hint">Click each one as you count, then enter your answer.</p>
+          <h2>Solve the Problem</h2>
         </div>
         
-        <div class="objects-area">
-          <div class="objects-grid">
-            ${objects}
-          </div>
+        <div class="problem-card">
+          <p class="problem-text">${params.scenario}</p>
+          <p class="hint-text">Hint: ${params.num1} × ${params.num2} = ?</p>
         </div>
         
         <div class="answer-section">
-          <label>How many ${params.objectType} are there?</label>
-          <div class="number-input-group">
-            <input type="number" 
-                   x-model="answer" 
-                   x-ref="mainInput"
-                   min="1" 
-                   max="20" 
-                   class="answer-input"
-                   :disabled="submitted"
-                   @keyup.enter="checkAnswer()">
-          </div>
+          <input type="number" 
+                 x-model="answer" 
+                 min="0" 
+                 max="100"
+                 class="answer-input"
+                 :disabled="submitted"
+                 @keyup.enter="checkAnswer()">
+          <span class="unit-label">${params.itemName}</span>
         </div>
         
         <div class="numpad-section">
@@ -136,7 +135,7 @@ export const countObjectsExercise: Exercise = {
             <button class="btn btn-primary" @click="tryAgain()" x-show="!correct" x-ref="tryAgainBtn">
               Try Again
             </button>
-            <a href="/practice/counting-objects" class="btn btn-primary" x-show="correct" x-ref="nextBtn">
+            <a href="/practice/mult-word-problems" class="btn btn-primary" x-show="correct" x-ref="nextBtn">
               Next Exercise
             </a>
             <a :href="dashboardUrl" class="btn btn-secondary">
@@ -147,45 +146,29 @@ export const countObjectsExercise: Exercise = {
       </div>
       
       <style>
-        .objects-area {
+        .problem-card {
           padding: 2rem;
           background: var(--color-bg);
           border-radius: var(--radius-lg);
           margin-bottom: 1.5rem;
+          text-align: center;
         }
-        .objects-grid {
-          display: flex;
-          flex-wrap: wrap;
-          justify-content: center;
-          gap: 0.75rem;
-          max-width: 400px;
-          margin: 0 auto;
+        .problem-text {
+          font-size: 1.25rem;
+          line-height: 1.6;
+          margin-bottom: 1rem;
         }
-        .count-object {
-          font-size: 2.5rem;
-          cursor: pointer;
-          transition: transform 0.2s;
-          user-select: none;
-        }
-        .count-object:hover {
-          transform: scale(1.2);
-        }
-        .count-object.counted {
-          opacity: 0.5;
-          transform: scale(0.9);
+        .hint-text {
+          font-size: 1rem;
+          color: var(--color-text-muted);
+          font-style: italic;
         }
         .answer-section {
-          text-align: center;
-          margin-bottom: 1.5rem;
-        }
-        .answer-section label {
-          display: block;
-          margin-bottom: 0.5rem;
-          font-weight: 500;
-        }
-        .number-input-group {
           display: flex;
+          align-items: center;
           justify-content: center;
+          gap: 0.5rem;
+          margin-bottom: 1rem;
         }
         .answer-input {
           width: 100px;
@@ -198,6 +181,10 @@ export const countObjectsExercise: Exercise = {
         .answer-input:focus {
           outline: none;
           border-color: var(--color-primary);
+        }
+        .unit-label {
+          font-size: 1rem;
+          color: var(--color-text-muted);
         }
         .numpad-section {
           display: flex;
@@ -246,7 +233,7 @@ export const countObjectsExercise: Exercise = {
       </style>
       
       <script>
-        function countObjects() {
+        function multWordProblemExercise() {
           return {
             answer: '',
             showNumpad: true,
@@ -254,15 +241,6 @@ export const countObjectsExercise: Exercise = {
             correct: false,
             feedback: '',
             dashboardUrl: window.exerciseData?.dashboardUrl || '/',
-            
-            init() {
-              this.$nextTick(() => this.$refs.mainInput?.focus());
-              document.querySelectorAll('.count-object').forEach(obj => {
-                obj.addEventListener('click', () => {
-                  obj.classList.toggle('counted');
-                });
-              });
-            },
             
             async checkAnswer() {
               if (!this.answer) return;
@@ -291,10 +269,8 @@ export const countObjectsExercise: Exercise = {
             tryAgain() {
               this.submitted = false;
               this.feedback = '';
-              document.querySelectorAll('.count-object.counted').forEach(obj => {
-                obj.classList.remove('counted');
-              });
-              setTimeout(() => this.$refs.mainInput?.focus(), 50);
+              this.answer = '';
+              setTimeout(() => document.querySelector('.answer-input')?.focus(), 50);
             }
           };
         }

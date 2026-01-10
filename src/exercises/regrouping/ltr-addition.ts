@@ -332,6 +332,7 @@ export const ltrAdditionExercise: Exercise = {
               this.carryPressed = false;
               this.showCarry = false;
               this.currentStep = 1;
+              setTimeout(() => this.$refs.tensInput?.focus(), 50);
             }
           };
         }

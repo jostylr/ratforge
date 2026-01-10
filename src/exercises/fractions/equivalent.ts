@@ -1,100 +1,96 @@
 import type { Exercise, ExerciseInstance, ValidationResult } from "../types";
 import { createSeed, seededRandom, randomInt } from "../types";
 
-export interface ObjectCountParams {
-  count: number;
-  objectType: string;
-  objectEmoji: string;
+export interface EquivalentFractionParams {
+  numerator1: number;
+  denominator1: number;
+  numerator2: number;
+  denominator2: number;
+  missingPart: 'numerator' | 'denominator';
+  answer: number;
 }
 
-const objectTypes = [
-  { name: 'apples', emoji: '🍎' },
-  { name: 'stars', emoji: '⭐' },
-  { name: 'hearts', emoji: '❤️' },
-  { name: 'balls', emoji: '🔵' },
-  { name: 'flowers', emoji: '🌸' },
-  { name: 'fish', emoji: '🐟' },
-  { name: 'butterflies', emoji: '🦋' },
-  { name: 'birds', emoji: '🐦' },
-];
-
-export const countObjectsExercise: Exercise = {
-  id: "counting-objects",
-  topic: "counting",
-  title: "Object Counting",
-  description: "Count groups of objects accurately",
-  difficulty: 1,
+export const equivalentFractionExercise: Exercise = {
+  id: "frac-equivalent",
+  topic: "fractions",
+  title: "Equivalent Fractions",
+  description: "Find the missing number to make equivalent fractions",
+  difficulty: 2,
 
   generate(seed?: number): ExerciseInstance {
     const actualSeed = seed ?? createSeed();
     const random = seededRandom(actualSeed);
     
-    const count = randomInt(3, 15, random);
-    const objType = objectTypes[randomInt(0, objectTypes.length - 1, random)]!;
+    // Start with a simple fraction
+    const numerator1 = randomInt(1, 5, random);
+    const denominator1 = randomInt(2, 6, random);
+    
+    // Multiply by a factor to get equivalent fraction
+    const factor = randomInt(2, 4, random);
+    const numerator2 = numerator1 * factor;
+    const denominator2 = denominator1 * factor;
+    
+    // Decide which part is missing
+    const missingPart = random() > 0.5 ? 'numerator' : 'denominator';
+    const answer = missingPart === 'numerator' ? numerator2 : denominator2;
     
     return {
       id: `${this.id}-${actualSeed}`,
       exerciseId: this.id,
       seed: actualSeed,
-      params: { 
-        count, 
-        objectType: objType.name,
-        objectEmoji: objType.emoji
-      } as unknown as Record<string, unknown>,
-      correctAnswer: count,
+      params: { numerator1, denominator1, numerator2, denominator2, missingPart, answer } as unknown as Record<string, unknown>,
+      correctAnswer: answer,
       createdAt: new Date().toISOString(),
     };
   },
 
   validate(instance: ExerciseInstance, answer: unknown): ValidationResult {
-    const params = instance.params as unknown as ObjectCountParams;
+    const params = instance.params as unknown as EquivalentFractionParams;
     const answerNum = typeof answer === "number" ? answer : parseInt(String(answer), 10);
     
-    if (answerNum === params.count) {
-      return { correct: true, feedback: `Yes! There are exactly ${params.count} ${params.objectType}! 🎉` };
+    if (answerNum === params.answer) {
+      return { correct: true, feedback: `Correct! ${params.numerator1}/${params.denominator1} = ${params.numerator2}/${params.denominator2} 🎉` };
     }
     
-    const diff = Math.abs(answerNum - params.count);
-    if (diff === 1) {
-      return { correct: false, feedback: "So close! Count one more time carefully." };
-    }
-    
-    return { correct: false, feedback: `Not quite. Try counting each ${params.objectType.slice(0, -1)} one by one.` };
+    return { correct: false, feedback: `Not quite. Think about what you multiply ${params.missingPart === 'numerator' ? params.numerator1 : params.denominator1} by to get the equivalent.` };
   },
 
   renderHTML(instance: ExerciseInstance): string {
-    const params = instance.params as unknown as ObjectCountParams;
+    const params = instance.params as unknown as EquivalentFractionParams;
     
-    let objects = '';
-    for (let i = 0; i < params.count; i++) {
-      objects += `<span class="count-object" data-index="${i}">${params.objectEmoji}</span>`;
-    }
+    const num2Display = params.missingPart === 'numerator' ? '?' : params.numerator2;
+    const den2Display = params.missingPart === 'denominator' ? '?' : params.denominator2;
     
     return `
-      <div class="exercise-container" x-data="countObjects()" x-init="init()">
+      <div class="exercise-container" x-data="equivalentFractionExercise()" x-init="$nextTick(() => document.querySelector('.answer-input')?.focus())">
         <div class="exercise-prompt">
-          <h2>Count the ${params.objectType}!</h2>
-          <p class="exercise-hint">Click each one as you count, then enter your answer.</p>
+          <h2>Find the missing number</h2>
+          <p class="exercise-hint">What number makes these fractions equal?</p>
         </div>
         
-        <div class="objects-area">
-          <div class="objects-grid">
-            ${objects}
+        <div class="fractions-display">
+          <div class="fraction">
+            <span class="numerator">${params.numerator1}</span>
+            <span class="fraction-bar"></span>
+            <span class="denominator">${params.denominator1}</span>
+          </div>
+          <span class="equals">=</span>
+          <div class="fraction">
+            <span class="numerator ${params.missingPart === 'numerator' ? 'missing' : ''}">${num2Display}</span>
+            <span class="fraction-bar"></span>
+            <span class="denominator ${params.missingPart === 'denominator' ? 'missing' : ''}">${den2Display}</span>
           </div>
         </div>
         
         <div class="answer-section">
-          <label>How many ${params.objectType} are there?</label>
-          <div class="number-input-group">
-            <input type="number" 
-                   x-model="answer" 
-                   x-ref="mainInput"
-                   min="1" 
-                   max="20" 
-                   class="answer-input"
-                   :disabled="submitted"
-                   @keyup.enter="checkAnswer()">
-          </div>
+          <label>Missing number:</label>
+          <input type="number" 
+                 x-model="answer" 
+                 min="1" 
+                 max="50"
+                 class="answer-input"
+                 :disabled="submitted"
+                 @keyup.enter="checkAnswer()">
         </div>
         
         <div class="numpad-section">
@@ -133,10 +129,13 @@ export const countObjectsExercise: Exercise = {
           </div>
           
           <div class="next-actions" x-show="submitted">
-            <button class="btn btn-primary" @click="tryAgain()" x-show="!correct" x-ref="tryAgainBtn">
+            <button class="btn btn-primary" @click="tryAgain()" x-show="!correct && !givenUp" x-ref="tryAgainBtn">
               Try Again
             </button>
-            <a href="/practice/counting-objects" class="btn btn-primary" x-show="correct" x-ref="nextBtn">
+            <button class="btn btn-warning" @click="giveUp()" x-show="!correct && !givenUp && attempts >= 3">
+              Give Up
+            </button>
+            <a href="/practice/frac-equivalent" class="btn btn-primary" x-show="correct || givenUp" x-ref="nextBtn">
               Next Exercise
             </a>
             <a :href="dashboardUrl" class="btn btn-secondary">
@@ -147,50 +146,54 @@ export const countObjectsExercise: Exercise = {
       </div>
       
       <style>
-        .objects-area {
+        .fractions-display {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 2rem;
           padding: 2rem;
           background: var(--color-bg);
           border-radius: var(--radius-lg);
           margin-bottom: 1.5rem;
         }
-        .objects-grid {
+        .fraction {
           display: flex;
-          flex-wrap: wrap;
-          justify-content: center;
-          gap: 0.75rem;
-          max-width: 400px;
-          margin: 0 auto;
+          flex-direction: column;
+          align-items: center;
+          font-size: 2rem;
+          font-weight: 600;
         }
-        .count-object {
-          font-size: 2.5rem;
-          cursor: pointer;
-          transition: transform 0.2s;
-          user-select: none;
+        .fraction-bar {
+          width: 50px;
+          height: 3px;
+          background: currentColor;
+          margin: 0.25rem 0;
         }
-        .count-object:hover {
-          transform: scale(1.2);
+        .numerator, .denominator {
+          min-width: 40px;
+          text-align: center;
         }
-        .count-object.counted {
-          opacity: 0.5;
-          transform: scale(0.9);
+        .missing {
+          color: var(--color-primary);
+          border: 2px dashed var(--color-primary);
+          border-radius: var(--radius-sm);
+          padding: 0.25rem 0.5rem;
+        }
+        .equals {
+          font-size: 2rem;
+          font-weight: 600;
         }
         .answer-section {
-          text-align: center;
-          margin-bottom: 1.5rem;
-        }
-        .answer-section label {
-          display: block;
-          margin-bottom: 0.5rem;
-          font-weight: 500;
-        }
-        .number-input-group {
           display: flex;
+          align-items: center;
           justify-content: center;
+          gap: 0.5rem;
+          margin-bottom: 1rem;
         }
         .answer-input {
-          width: 100px;
+          width: 80px;
           padding: 0.75rem;
-          font-size: 2rem;
+          font-size: 1.5rem;
           text-align: center;
           border: 2px solid var(--color-border);
           border-radius: var(--radius-md);
@@ -246,23 +249,17 @@ export const countObjectsExercise: Exercise = {
       </style>
       
       <script>
-        function countObjects() {
+        function equivalentFractionExercise() {
           return {
             answer: '',
             showNumpad: true,
             submitted: false,
             correct: false,
             feedback: '',
+            attempts: 0,
+            givenUp: false,
+            correctAnswer: window.exerciseData?.correctAnswer || '',
             dashboardUrl: window.exerciseData?.dashboardUrl || '/',
-            
-            init() {
-              this.$nextTick(() => this.$refs.mainInput?.focus());
-              document.querySelectorAll('.count-object').forEach(obj => {
-                obj.addEventListener('click', () => {
-                  obj.classList.toggle('counted');
-                });
-              });
-            },
             
             async checkAnswer() {
               if (!this.answer) return;
@@ -281,6 +278,7 @@ export const countObjectsExercise: Exercise = {
               this.correct = result.correct;
               this.feedback = result.feedback;
               this.submitted = true;
+              this.attempts++;
               if (result.correct) {
                 setTimeout(() => this.$refs.nextBtn?.focus(), 50);
               } else {
@@ -291,10 +289,14 @@ export const countObjectsExercise: Exercise = {
             tryAgain() {
               this.submitted = false;
               this.feedback = '';
-              document.querySelectorAll('.count-object.counted').forEach(obj => {
-                obj.classList.remove('counted');
-              });
-              setTimeout(() => this.$refs.mainInput?.focus(), 50);
+              this.answer = '';
+              setTimeout(() => document.querySelector('.answer-input')?.focus(), 50);
+            },
+            
+            giveUp() {
+              this.givenUp = true;
+              this.feedback = 'The answer was: ' + this.correctAnswer;
+              setTimeout(() => this.$refs.nextBtn?.focus(), 50);
             }
           };
         }

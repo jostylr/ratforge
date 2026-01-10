@@ -1,100 +1,127 @@
 import type { Exercise, ExerciseInstance, ValidationResult } from "../types";
 import { createSeed, seededRandom, randomInt } from "../types";
 
-export interface ObjectCountParams {
-  count: number;
-  objectType: string;
-  objectEmoji: string;
+export interface ElapsedTimeParams {
+  startHour: number;
+  startMinute: number;
+  elapsedMinutes: number;
+  endHour: number;
+  endMinute: number;
+  questionType: 'find-end' | 'find-elapsed';
 }
 
-const objectTypes = [
-  { name: 'apples', emoji: '🍎' },
-  { name: 'stars', emoji: '⭐' },
-  { name: 'hearts', emoji: '❤️' },
-  { name: 'balls', emoji: '🔵' },
-  { name: 'flowers', emoji: '🌸' },
-  { name: 'fish', emoji: '🐟' },
-  { name: 'butterflies', emoji: '🦋' },
-  { name: 'birds', emoji: '🐦' },
-];
-
-export const countObjectsExercise: Exercise = {
-  id: "counting-objects",
-  topic: "counting",
-  title: "Object Counting",
-  description: "Count groups of objects accurately",
-  difficulty: 1,
+export const elapsedTimeExercise: Exercise = {
+  id: "time-elapsed",
+  topic: "time",
+  title: "Elapsed Time",
+  description: "Calculate elapsed time between two times",
+  difficulty: 2,
 
   generate(seed?: number): ExerciseInstance {
     const actualSeed = seed ?? createSeed();
     const random = seededRandom(actualSeed);
     
-    const count = randomInt(3, 15, random);
-    const objType = objectTypes[randomInt(0, objectTypes.length - 1, random)]!;
+    const startHour = randomInt(1, 11, random);
+    const startMinute = randomInt(0, 1, random) * 30; // 0 or 30
+    const elapsedMinutes = randomInt(1, 4, random) * 30; // 30, 60, 90, or 120 minutes
+    
+    let totalMinutes = startHour * 60 + startMinute + elapsedMinutes;
+    let endHour = Math.floor(totalMinutes / 60) % 12;
+    if (endHour === 0) endHour = 12;
+    const endMinute = totalMinutes % 60;
+    
+    const questionType = random() > 0.5 ? 'find-end' : 'find-elapsed';
+    const correctAnswer = questionType === 'find-elapsed' ? elapsedMinutes : endHour * 100 + endMinute;
     
     return {
       id: `${this.id}-${actualSeed}`,
       exerciseId: this.id,
       seed: actualSeed,
-      params: { 
-        count, 
-        objectType: objType.name,
-        objectEmoji: objType.emoji
-      } as unknown as Record<string, unknown>,
-      correctAnswer: count,
+      params: { startHour, startMinute, elapsedMinutes, endHour, endMinute, questionType } as unknown as Record<string, unknown>,
+      correctAnswer,
       createdAt: new Date().toISOString(),
     };
   },
 
   validate(instance: ExerciseInstance, answer: unknown): ValidationResult {
-    const params = instance.params as unknown as ObjectCountParams;
+    const params = instance.params as unknown as ElapsedTimeParams;
     const answerNum = typeof answer === "number" ? answer : parseInt(String(answer), 10);
     
-    if (answerNum === params.count) {
-      return { correct: true, feedback: `Yes! There are exactly ${params.count} ${params.objectType}! 🎉` };
+    if (params.questionType === 'find-elapsed') {
+      if (answerNum === params.elapsedMinutes) {
+        const hours = Math.floor(params.elapsedMinutes / 60);
+        const mins = params.elapsedMinutes % 60;
+        const timeStr = hours > 0 ? `${hours} hour${hours > 1 ? 's' : ''}${mins > 0 ? ` and ${mins} minutes` : ''}` : `${mins} minutes`;
+        return { correct: true, feedback: `Correct! ${timeStr} elapsed. 🎉` };
+      }
+    } else {
+      const expectedAnswer = params.endHour * 100 + params.endMinute;
+      if (answerNum === expectedAnswer || answerNum === params.endHour * 60 + params.endMinute) {
+        return { correct: true, feedback: `Correct! The end time is ${params.endHour}:${String(params.endMinute).padStart(2, '0')}. 🎉` };
+      }
     }
     
-    const diff = Math.abs(answerNum - params.count);
-    if (diff === 1) {
-      return { correct: false, feedback: "So close! Count one more time carefully." };
-    }
-    
-    return { correct: false, feedback: `Not quite. Try counting each ${params.objectType.slice(0, -1)} one by one.` };
+    return { correct: false, feedback: `Not quite. Try counting the time on a clock.` };
   },
 
   renderHTML(instance: ExerciseInstance): string {
-    const params = instance.params as unknown as ObjectCountParams;
+    const params = instance.params as unknown as ElapsedTimeParams;
     
-    let objects = '';
-    for (let i = 0; i < params.count; i++) {
-      objects += `<span class="count-object" data-index="${i}">${params.objectEmoji}</span>`;
-    }
+    const formatTime = (h: number, m: number) => `${h}:${String(m).padStart(2, '0')}`;
+    const formatElapsed = (mins: number) => {
+      const h = Math.floor(mins / 60);
+      const m = mins % 60;
+      if (h > 0 && m > 0) return `${h} hour${h > 1 ? 's' : ''} ${m} min`;
+      if (h > 0) return `${h} hour${h > 1 ? 's' : ''}`;
+      return `${m} minutes`;
+    };
+    
+    const prompt = params.questionType === 'find-end'
+      ? `Start: <strong>${formatTime(params.startHour, params.startMinute)}</strong><br>Time passed: <strong>${formatElapsed(params.elapsedMinutes)}</strong><br>End time: <strong>?</strong>`
+      : `Start: <strong>${formatTime(params.startHour, params.startMinute)}</strong><br>End: <strong>${formatTime(params.endHour, params.endMinute)}</strong><br>Time passed: <strong>? minutes</strong>`;
+    
+    // Draw clock hands
+    const startAngle = (params.startHour % 12) * 30 + params.startMinute * 0.5 - 90;
+    const startMinAngle = params.startMinute * 6 - 90;
     
     return `
-      <div class="exercise-container" x-data="countObjects()" x-init="init()">
+      <div class="exercise-container" x-data="elapsedTimeExercise()" x-init="$nextTick(() => document.querySelector('.answer-input')?.focus())">
         <div class="exercise-prompt">
-          <h2>Count the ${params.objectType}!</h2>
-          <p class="exercise-hint">Click each one as you count, then enter your answer.</p>
+          <h2>${params.questionType === 'find-end' ? 'What time will it be?' : 'How much time passed?'}</h2>
         </div>
         
-        <div class="objects-area">
-          <div class="objects-grid">
-            ${objects}
+        <div class="time-display">
+          <div class="clock-visual">
+            <svg viewBox="0 0 100 100" class="clock-svg">
+              <circle cx="50" cy="50" r="45" fill="white" stroke="#333" stroke-width="2"/>
+              ${[...Array(12)].map((_, i) => {
+                const angle = (i * 30 - 60) * Math.PI / 180;
+                const x = 50 + 38 * Math.cos(angle);
+                const y = 50 + 38 * Math.sin(angle);
+                return `<text x="${x}" y="${y}" text-anchor="middle" dominant-baseline="middle" font-size="8" font-weight="600">${i + 1}</text>`;
+              }).join('')}
+              <line x1="50" y1="50" x2="${50 + 25 * Math.cos(startAngle * Math.PI / 180)}" y2="${50 + 25 * Math.sin(startAngle * Math.PI / 180)}" stroke="#333" stroke-width="3" stroke-linecap="round"/>
+              <line x1="50" y1="50" x2="${50 + 35 * Math.cos(startMinAngle * Math.PI / 180)}" y2="${50 + 35 * Math.sin(startMinAngle * Math.PI / 180)}" stroke="#666" stroke-width="2" stroke-linecap="round"/>
+              <circle cx="50" cy="50" r="3" fill="#333"/>
+            </svg>
+            <span class="clock-label">Start: ${formatTime(params.startHour, params.startMinute)}</span>
+          </div>
+          
+          <div class="time-info">
+            ${prompt}
           </div>
         </div>
         
         <div class="answer-section">
-          <label>How many ${params.objectType} are there?</label>
-          <div class="number-input-group">
-            <input type="number" 
-                   x-model="answer" 
-                   x-ref="mainInput"
-                   min="1" 
-                   max="20" 
-                   class="answer-input"
-                   :disabled="submitted"
-                   @keyup.enter="checkAnswer()">
-          </div>
+          <input type="number" 
+                 x-model="answer" 
+                 min="0" 
+                 max="1259"
+                 class="answer-input"
+                 placeholder="${params.questionType === 'find-elapsed' ? 'minutes' : 'e.g. 230'}"
+                 :disabled="submitted"
+                 @keyup.enter="checkAnswer()">
+          <span class="unit-label">${params.questionType === 'find-elapsed' ? 'minutes' : '(hour + minutes, e.g. 230 = 2:30)'}</span>
         </div>
         
         <div class="numpad-section">
@@ -136,7 +163,7 @@ export const countObjectsExercise: Exercise = {
             <button class="btn btn-primary" @click="tryAgain()" x-show="!correct" x-ref="tryAgainBtn">
               Try Again
             </button>
-            <a href="/practice/counting-objects" class="btn btn-primary" x-show="correct" x-ref="nextBtn">
+            <a href="/practice/time-elapsed" class="btn btn-primary" x-show="correct" x-ref="nextBtn">
               Next Exercise
             </a>
             <a :href="dashboardUrl" class="btn btn-secondary">
@@ -147,50 +174,48 @@ export const countObjectsExercise: Exercise = {
       </div>
       
       <style>
-        .objects-area {
+        .time-display {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 2rem;
           padding: 2rem;
           background: var(--color-bg);
           border-radius: var(--radius-lg);
           margin-bottom: 1.5rem;
-        }
-        .objects-grid {
-          display: flex;
           flex-wrap: wrap;
-          justify-content: center;
-          gap: 0.75rem;
-          max-width: 400px;
-          margin: 0 auto;
         }
-        .count-object {
-          font-size: 2.5rem;
-          cursor: pointer;
-          transition: transform 0.2s;
-          user-select: none;
+        .clock-visual {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 0.5rem;
         }
-        .count-object:hover {
-          transform: scale(1.2);
+        .clock-svg {
+          width: 120px;
+          height: 120px;
         }
-        .count-object.counted {
-          opacity: 0.5;
-          transform: scale(0.9);
+        .clock-label {
+          font-size: 0.875rem;
+          font-weight: 600;
+          color: var(--color-text-muted);
+        }
+        .time-info {
+          font-size: 1.1rem;
+          line-height: 1.8;
+          text-align: center;
         }
         .answer-section {
-          text-align: center;
-          margin-bottom: 1.5rem;
-        }
-        .answer-section label {
-          display: block;
-          margin-bottom: 0.5rem;
-          font-weight: 500;
-        }
-        .number-input-group {
           display: flex;
-          justify-content: center;
+          flex-direction: column;
+          align-items: center;
+          gap: 0.5rem;
+          margin-bottom: 1rem;
         }
         .answer-input {
-          width: 100px;
+          width: 120px;
           padding: 0.75rem;
-          font-size: 2rem;
+          font-size: 1.5rem;
           text-align: center;
           border: 2px solid var(--color-border);
           border-radius: var(--radius-md);
@@ -198,6 +223,10 @@ export const countObjectsExercise: Exercise = {
         .answer-input:focus {
           outline: none;
           border-color: var(--color-primary);
+        }
+        .unit-label {
+          font-size: 0.75rem;
+          color: var(--color-text-muted);
         }
         .numpad-section {
           display: flex;
@@ -246,7 +275,7 @@ export const countObjectsExercise: Exercise = {
       </style>
       
       <script>
-        function countObjects() {
+        function elapsedTimeExercise() {
           return {
             answer: '',
             showNumpad: true,
@@ -254,15 +283,6 @@ export const countObjectsExercise: Exercise = {
             correct: false,
             feedback: '',
             dashboardUrl: window.exerciseData?.dashboardUrl || '/',
-            
-            init() {
-              this.$nextTick(() => this.$refs.mainInput?.focus());
-              document.querySelectorAll('.count-object').forEach(obj => {
-                obj.addEventListener('click', () => {
-                  obj.classList.toggle('counted');
-                });
-              });
-            },
             
             async checkAnswer() {
               if (!this.answer) return;
@@ -291,10 +311,8 @@ export const countObjectsExercise: Exercise = {
             tryAgain() {
               this.submitted = false;
               this.feedback = '';
-              document.querySelectorAll('.count-object.counted').forEach(obj => {
-                obj.classList.remove('counted');
-              });
-              setTimeout(() => this.$refs.mainInput?.focus(), 50);
+              this.answer = '';
+              setTimeout(() => document.querySelector('.answer-input')?.focus(), 50);
             }
           };
         }

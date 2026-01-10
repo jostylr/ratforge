@@ -191,6 +191,7 @@ export const tenthsExercise: Exercise = {
               this.submitted = false;
               this.feedback = '';
               this.answer = '';
+              setTimeout(() => document.querySelector('.decimal-input')?.focus(), 50);
             }
           };
         }

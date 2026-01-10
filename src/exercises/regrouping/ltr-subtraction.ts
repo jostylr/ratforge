@@ -332,6 +332,7 @@ export const ltrSubtractionExercise: Exercise = {
               this.borrowPressed = false;
               this.showBorrow = false;
               this.currentStep = 1;
+              setTimeout(() => this.$refs.tensInput?.focus(), 50);
             }
           };
         }

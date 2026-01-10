@@ -6,6 +6,7 @@ import { homePage } from "./templates/pages/home";
 import { aboutPage } from "./templates/pages/about";
 import { dashboardPage } from "./templates/pages/dashboard";
 import { exercisePage } from "./templates/pages/exercise";
+import { practicePage } from "./templates/pages/practice";
 import { createSession, getSessionFromRequest, createSessionCookie } from "./auth/session";
 import { requireAuth, getSessionFromToken, type AuthenticatedRequest } from "./auth/middleware";
 import { getUserIdByToken } from "./db/tokens";
@@ -54,6 +55,12 @@ router.get("/", (req) => {
 });
 
 router.get("/about", () => html(aboutPage()));
+
+// Practice page with all exercises
+router.get("/practice", (req) => {
+  const session = getSessionFromRequest(req);
+  return html(practicePage(session?.token));
+});
 
 // Topic TOC pages (require auth)
 const topicRoutes = [

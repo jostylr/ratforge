@@ -195,6 +195,7 @@ export const hourHalfExercise: Exercise = {
               this.submitted = false;
               this.feedback = '';
               this.answer = '';
+              setTimeout(() => document.querySelector('.time-input')?.focus(), 50);
             }
           };
         }

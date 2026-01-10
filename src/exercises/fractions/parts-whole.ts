@@ -216,6 +216,7 @@ export const partsWholeExercise: Exercise = {
               this.submitted = false;
               this.feedback = '';
               this.answer = '';
+              setTimeout(() => document.querySelector('.fraction-input')?.focus(), 50);
             }
           };
         }
