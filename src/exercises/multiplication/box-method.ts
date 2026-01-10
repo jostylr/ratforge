@@ -69,67 +69,121 @@ export const boxMethodExercise: Exercise = {
     const params = instance.params as unknown as BoxMethodParams;
     
     return `
-      <div class="exercise-container" x-data="boxMethodExercise()">
+      <div class="exercise-container" x-data="boxMethodExercise()" x-init="init()">
         <div class="exercise-prompt">
           <h2>${params.num1} × ${params.num2} = ?</h2>
-          <p class="exercise-hint">Use the box method: break each number into tens and ones!</p>
+          <p class="exercise-hint">Fill each box diagonally. Press <kbd>Enter</kbd> to move, <kbd>Space</kbd> for carry, <kbd>X</kbd> for borrow.</p>
         </div>
         
         <div class="box-method-container">
           <table class="box-grid">
             <tr>
-              <th></th>
+              <th class="corner-cell">×</th>
               <th>${params.tens1 * 10}</th>
               <th>${params.ones1}</th>
             </tr>
             <tr>
               <th>${params.tens2 * 10}</th>
-              <td class="box-cell" @click="fillCell('topLeft')">
-                <span x-show="cells.topLeft !== null" x-text="cells.topLeft"></span>
-                <span x-show="cells.topLeft === null" class="placeholder">?</span>
+              <td class="box-cell" :class="{ active: currentCellIndex === 0, filled: cells[0] !== '' }" @click="focusCell(0)">
+                <input type="text" 
+                       x-model="cells[0]" 
+                       x-ref="cell0"
+                       class="cell-input"
+                       :disabled="submitted"
+                       @keydown="handleKeydown($event, 0)"
+                       @focus="currentCellIndex = 0"
+                       placeholder="${params.tens1}×${params.tens2}×100">
+                <span class="cell-hint">×100</span>
               </td>
-              <td class="box-cell" @click="fillCell('topRight')">
-                <span x-show="cells.topRight !== null" x-text="cells.topRight"></span>
-                <span x-show="cells.topRight === null" class="placeholder">?</span>
+              <td class="box-cell" :class="{ active: currentCellIndex === 2, filled: cells[2] !== '' }" @click="focusCell(2)">
+                <input type="text" 
+                       x-model="cells[2]" 
+                       x-ref="cell2"
+                       class="cell-input"
+                       :disabled="submitted"
+                       @keydown="handleKeydown($event, 2)"
+                       @focus="currentCellIndex = 2"
+                       placeholder="${params.ones1}×${params.tens2}×10">
+                <span class="cell-hint">×10</span>
               </td>
             </tr>
             <tr>
               <th>${params.ones2}</th>
-              <td class="box-cell" @click="fillCell('bottomLeft')">
-                <span x-show="cells.bottomLeft !== null" x-text="cells.bottomLeft"></span>
-                <span x-show="cells.bottomLeft === null" class="placeholder">?</span>
+              <td class="box-cell" :class="{ active: currentCellIndex === 1, filled: cells[1] !== '' }" @click="focusCell(1)">
+                <input type="text" 
+                       x-model="cells[1]" 
+                       x-ref="cell1"
+                       class="cell-input"
+                       :disabled="submitted"
+                       @keydown="handleKeydown($event, 1)"
+                       @focus="currentCellIndex = 1"
+                       placeholder="${params.tens1}×${params.ones2}×10">
+                <span class="cell-hint">×10</span>
               </td>
-              <td class="box-cell" @click="fillCell('bottomRight')">
-                <span x-show="cells.bottomRight !== null" x-text="cells.bottomRight"></span>
-                <span x-show="cells.bottomRight === null" class="placeholder">?</span>
+              <td class="box-cell" :class="{ active: currentCellIndex === 3, filled: cells[3] !== '' }" @click="focusCell(3)">
+                <input type="text" 
+                       x-model="cells[3]" 
+                       x-ref="cell3"
+                       class="cell-input"
+                       :disabled="submitted"
+                       @keydown="handleKeydown($event, 3)"
+                       @focus="currentCellIndex = 3"
+                       placeholder="${params.ones1}×${params.ones2}">
+                <span class="cell-hint">×1</span>
               </td>
             </tr>
           </table>
           
-          <div class="box-sum" x-show="allFilled">
-            <span x-text="cells.topLeft"></span> + 
-            <span x-text="cells.topRight"></span> + 
-            <span x-text="cells.bottomLeft"></span> + 
-            <span x-text="cells.bottomRight"></span> = 
-            <input type="number" x-model="answer" class="sum-input" :disabled="submitted">
+          <div class="carry-controls" x-show="showCarryControls">
+            <button type="button" class="carry-btn" :class="{ active: carryActive }" @click="toggleCarry()">
+              <kbd>Space</kbd> Carry +10
+            </button>
+            <button type="button" class="borrow-btn" :class="{ active: borrowActive }" @click="toggleBorrow()">
+              <kbd>X</kbd> Borrow -10
+            </button>
+          </div>
+          
+          <div class="running-total">
+            <span class="total-label">Running total:</span>
+            <span class="total-value" x-text="runningTotal"></span>
+          </div>
+          
+          <div class="final-answer" x-show="allFilled">
+            <label>Final Answer:</label>
+            <input type="text" 
+                   x-model="answer" 
+                   x-ref="answerInput"
+                   class="sum-input"
+                   :disabled="submitted"
+                   @keyup.enter="checkAnswer()">
           </div>
         </div>
         
-        <div class="cell-input-modal" x-show="showCellInput" x-cloak @click.away="showCellInput = false">
-          <div class="modal-content">
-            <p x-text="cellPrompt"></p>
-            <input type="number" 
-                   x-model="cellValue" 
-                   class="cell-input"
-                   @keyup.enter="submitCellValue()"
-                   x-ref="cellInput">
-            <button class="btn btn-primary" @click="submitCellValue()">OK</button>
+        <div class="numpad-section">
+          <button type="button" class="numpad-toggle" @click="showNumpad = !showNumpad">
+            <span x-text="showNumpad ? '⌨️ Hide Numpad' : '🔢 Show Numpad'"></span>
+          </button>
+          <div class="number-pad" x-show="showNumpad" x-cloak>
+            <div class="pad-grid">
+              <button type="button" class="pad-btn" @click="appendDigit('7')" :disabled="submitted">7</button>
+              <button type="button" class="pad-btn" @click="appendDigit('8')" :disabled="submitted">8</button>
+              <button type="button" class="pad-btn" @click="appendDigit('9')" :disabled="submitted">9</button>
+              <button type="button" class="pad-btn" @click="appendDigit('4')" :disabled="submitted">4</button>
+              <button type="button" class="pad-btn" @click="appendDigit('5')" :disabled="submitted">5</button>
+              <button type="button" class="pad-btn" @click="appendDigit('6')" :disabled="submitted">6</button>
+              <button type="button" class="pad-btn" @click="appendDigit('1')" :disabled="submitted">1</button>
+              <button type="button" class="pad-btn" @click="appendDigit('2')" :disabled="submitted">2</button>
+              <button type="button" class="pad-btn" @click="appendDigit('3')" :disabled="submitted">3</button>
+              <button type="button" class="pad-btn pad-special" @click="clearCurrent()" :disabled="submitted">C</button>
+              <button type="button" class="pad-btn" @click="appendDigit('0')" :disabled="submitted">0</button>
+              <button type="button" class="pad-btn pad-enter" @click="moveNext()" :disabled="submitted">↵</button>
+            </div>
           </div>
         </div>
         
         <div class="exercise-controls">
           <button class="btn btn-secondary" @click="autoFill()" x-show="!allFilled && !submitted">
-            Show Filled Boxes
+            Show Answers
           </button>
           <button class="btn btn-primary btn-large"
                   @click="checkAnswer()"
@@ -163,7 +217,7 @@ export const boxMethodExercise: Exercise = {
           padding: 1.5rem;
           background: var(--color-bg);
           border-radius: var(--radius-lg);
-          margin-bottom: 1.5rem;
+          margin-bottom: 1rem;
         }
         .box-grid {
           margin: 0 auto 1rem;
@@ -171,128 +225,260 @@ export const boxMethodExercise: Exercise = {
         }
         .box-grid th, .box-grid td {
           border: 2px solid var(--color-border);
-          padding: 1rem 1.5rem;
+          padding: 0.5rem;
           text-align: center;
-          font-size: 1.25rem;
+          font-size: 1.1rem;
         }
         .box-grid th {
           background: var(--color-surface);
           font-weight: 600;
+          padding: 0.75rem 1rem;
+        }
+        .corner-cell {
+          font-size: 1.5rem !important;
         }
         .box-cell {
-          cursor: pointer;
-          min-width: 80px;
-          transition: background 0.2s;
+          min-width: 120px;
+          position: relative;
+          background: white;
+          transition: all 0.2s;
         }
-        .box-cell:hover {
+        .box-cell.active {
           background: rgba(99, 102, 241, 0.1);
+          border-color: var(--color-primary);
         }
-        .placeholder {
-          color: var(--color-text-muted);
+        .box-cell.filled {
+          background: rgba(34, 197, 94, 0.1);
+        }
+        .cell-input {
+          width: 100%;
+          padding: 0.75rem;
           font-size: 1.5rem;
-        }
-        .box-sum {
-          font-size: 1.25rem;
-          margin-top: 1rem;
-        }
-        .sum-input {
-          width: 100px;
-          padding: 0.5rem;
-          font-size: 1.25rem;
+          font-weight: 600;
           text-align: center;
+          border: none;
+          background: transparent;
+        }
+        .cell-input:focus {
+          outline: none;
+        }
+        .cell-input::placeholder {
+          font-size: 0.7rem;
+          color: var(--color-text-muted);
+          font-weight: 400;
+        }
+        .cell-hint {
+          position: absolute;
+          bottom: 2px;
+          right: 4px;
+          font-size: 0.65rem;
+          color: var(--color-text-muted);
+        }
+        .carry-controls {
+          display: flex;
+          justify-content: center;
+          gap: 1rem;
+          margin-bottom: 1rem;
+        }
+        .carry-btn, .borrow-btn {
+          padding: 0.5rem 1rem;
+          font-size: 0.875rem;
           border: 2px solid var(--color-border);
           border-radius: var(--radius-md);
+          background: var(--color-surface);
+          cursor: pointer;
         }
-        .cell-input-modal {
-          position: fixed;
-          top: 0;
-          left: 0;
-          right: 0;
-          bottom: 0;
-          background: rgba(0,0,0,0.5);
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          z-index: 100;
+        .carry-btn kbd, .borrow-btn kbd {
+          background: var(--color-bg);
+          padding: 0.125rem 0.375rem;
+          border-radius: var(--radius-sm);
+          font-size: 0.75rem;
+          margin-right: 0.25rem;
         }
-        .modal-content {
-          background: white;
-          padding: 1.5rem;
-          border-radius: var(--radius-lg);
-          text-align: center;
+        .carry-btn.active {
+          background: #22c55e;
+          border-color: #22c55e;
+          color: white;
         }
-        .modal-content p {
+        .borrow-btn.active {
+          background: #ef4444;
+          border-color: #ef4444;
+          color: white;
+        }
+        .running-total {
           margin-bottom: 1rem;
           font-size: 1.125rem;
         }
-        .cell-input {
+        .total-label {
+          color: var(--color-text-muted);
+        }
+        .total-value {
+          font-weight: 700;
+          color: var(--color-primary);
+          margin-left: 0.5rem;
+        }
+        .final-answer {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 0.75rem;
+        }
+        .final-answer label {
+          font-weight: 500;
+        }
+        .sum-input {
           width: 120px;
           padding: 0.75rem;
           font-size: 1.5rem;
           text-align: center;
           border: 2px solid var(--color-border);
           border-radius: var(--radius-md);
-          margin-right: 0.5rem;
         }
+        .sum-input:focus {
+          outline: none;
+          border-color: var(--color-primary);
+        }
+        .numpad-section {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 0.5rem;
+          margin-bottom: 1rem;
+        }
+        .numpad-toggle {
+          padding: 0.5rem 1rem;
+          font-size: 0.875rem;
+          border: 1px solid var(--color-border);
+          border-radius: var(--radius-md);
+          background: var(--color-surface);
+          cursor: pointer;
+        }
+        .number-pad {
+          padding: 1rem;
+          background: var(--color-bg);
+          border-radius: var(--radius-lg);
+          border: 1px solid var(--color-border);
+        }
+        .pad-grid {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 0.5rem;
+        }
+        .pad-btn {
+          width: 55px;
+          height: 45px;
+          font-size: 1.25rem;
+          font-weight: 600;
+          border: 1px solid var(--color-border);
+          border-radius: var(--radius-md);
+          background: var(--color-surface);
+          cursor: pointer;
+          transition: all 0.15s;
+        }
+        .pad-btn:hover:not(:disabled) {
+          background: var(--color-primary);
+          color: white;
+        }
+        .pad-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .pad-special { background: var(--color-bg); }
+        .pad-enter { background: var(--color-primary); color: white; }
       </style>
       
       <script>
         function boxMethodExercise() {
           return {
-            cells: {
-              topLeft: null,
-              topRight: null,
-              bottomLeft: null,
-              bottomRight: null
-            },
-            expectedValues: {
-              topLeft: ${params.topLeft},
-              topRight: ${params.topRight},
-              bottomLeft: ${params.bottomLeft},
-              bottomRight: ${params.bottomRight}
-            },
+            // Diagonal order: topLeft(×100) → bottomLeft(×10) → topRight(×10) → bottomRight(×1)
+            cellOrder: [0, 1, 2, 3], // indices in cells array
+            cellNames: ['topLeft', 'bottomLeft', 'topRight', 'bottomRight'],
+            cells: ['', '', '', ''], // [topLeft, bottomLeft, topRight, bottomRight]
+            expectedValues: [${params.topLeft}, ${params.bottomLeft}, ${params.topRight}, ${params.bottomRight}],
+            currentCellIndex: 0,
             answer: '',
-            showCellInput: false,
-            currentCell: '',
-            cellPrompt: '',
-            cellValue: '',
+            showNumpad: true,
+            showCarryControls: true,
+            carryActive: false,
+            borrowActive: false,
             submitted: false,
             correct: false,
             feedback: '',
             dashboardUrl: window.exerciseData?.dashboardUrl || '/',
             
+            init() {
+              this.$nextTick(() => this.$refs.cell0?.focus());
+            },
+            
             get allFilled() {
-              return this.cells.topLeft !== null && 
-                     this.cells.topRight !== null && 
-                     this.cells.bottomLeft !== null && 
-                     this.cells.bottomRight !== null;
+              return this.cells.every(c => c !== '');
             },
             
-            fillCell(cell) {
-              if (this.submitted) return;
-              this.currentCell = cell;
-              const prompts = {
-                topLeft: '${params.tens1 * 10} × ${params.tens2 * 10} = ?',
-                topRight: '${params.ones1} × ${params.tens2 * 10} = ?',
-                bottomLeft: '${params.tens1 * 10} × ${params.ones2} = ?',
-                bottomRight: '${params.ones1} × ${params.ones2} = ?'
-              };
-              this.cellPrompt = prompts[cell];
-              this.cellValue = '';
-              this.showCellInput = true;
-              this.$nextTick(() => this.$refs.cellInput?.focus());
+            get runningTotal() {
+              return this.cells.reduce((sum, val) => sum + (parseInt(val) || 0), 0);
             },
             
-            submitCellValue() {
-              const val = parseInt(this.cellValue);
-              if (!isNaN(val)) {
-                this.cells[this.currentCell] = val;
+            focusCell(index) {
+              this.currentCellIndex = index;
+              this.$refs['cell' + index]?.focus();
+            },
+            
+            handleKeydown(e, cellIndex) {
+              if (e.key === 'Enter') {
+                e.preventDefault();
+                this.moveNext();
+              } else if (e.code === 'Space') {
+                e.preventDefault();
+                this.toggleCarry();
+              } else if (e.key === 'x' || e.key === 'X') {
+                e.preventDefault();
+                this.toggleBorrow();
               }
-              this.showCellInput = false;
+            },
+            
+            moveNext() {
+              if (this.currentCellIndex < 3) {
+                this.currentCellIndex++;
+                this.$refs['cell' + this.currentCellIndex]?.focus();
+              } else if (this.allFilled) {
+                this.$refs.answerInput?.focus();
+              }
+            },
+            
+            appendDigit(digit) {
+              if (this.currentCellIndex <= 3 && !this.allFilled) {
+                this.cells[this.currentCellIndex] += digit;
+              } else if (this.allFilled) {
+                this.answer += digit;
+              }
+            },
+            
+            clearCurrent() {
+              if (this.currentCellIndex <= 3) {
+                this.cells[this.currentCellIndex] = '';
+              } else {
+                this.answer = '';
+              }
+            },
+            
+            toggleCarry() {
+              this.carryActive = !this.carryActive;
+              this.borrowActive = false;
+              if (this.carryActive && this.currentCellIndex <= 3) {
+                const current = parseInt(this.cells[this.currentCellIndex]) || 0;
+                this.cells[this.currentCellIndex] = String(current + 10);
+              }
+            },
+            
+            toggleBorrow() {
+              this.borrowActive = !this.borrowActive;
+              this.carryActive = false;
+              if (this.borrowActive && this.currentCellIndex <= 3) {
+                const current = parseInt(this.cells[this.currentCellIndex]) || 0;
+                this.cells[this.currentCellIndex] = String(Math.max(0, current - 10));
+              }
             },
             
             autoFill() {
-              this.cells = { ...this.expectedValues };
+              this.cells = this.expectedValues.map(String);
+              this.$refs.answerInput?.focus();
             },
             
             async checkAnswer() {
@@ -318,7 +504,9 @@ export const boxMethodExercise: Exercise = {
               this.submitted = false;
               this.feedback = '';
               this.answer = '';
-              this.cells = { topLeft: null, topRight: null, bottomLeft: null, bottomRight: null };
+              this.cells = ['', '', '', ''];
+              this.currentCellIndex = 0;
+              this.$nextTick(() => this.$refs.cell0?.focus());
             }
           };
         }

@@ -62,7 +62,7 @@ export const skipCountExercise: Exercise = {
     }).join('<span class="seq-arrow">→</span>');
     
     return `
-      <div class="exercise-container" x-data="skipCountExercise()">
+      <div class="exercise-container" x-data="skipCountExercise()" x-init="$nextTick(() => document.querySelector('.seq-input')?.focus())">
         <div class="exercise-prompt">
           <h2>Count by ${params.skipBy}s</h2>
           <p class="exercise-hint">Find the missing number in the pattern.</p>
@@ -89,7 +89,7 @@ export const skipCountExercise: Exercise = {
             <button class="btn btn-primary" @click="tryAgain()" x-show="!correct">
               Try Again
             </button>
-            <a href="/practice/patterns-skip-2" class="btn btn-primary" x-show="correct">
+            <a href="/practice/patterns-skip-2" class="btn btn-primary" x-show="correct" x-ref="nextBtn">
               Next Exercise
             </a>
             <a :href="dashboardUrl" class="btn btn-secondary">
@@ -172,6 +172,9 @@ export const skipCountExercise: Exercise = {
               this.correct = result.correct;
               this.feedback = result.feedback;
               this.submitted = true;
+              if (result.correct) {
+                this.$nextTick(() => this.$refs.nextBtn?.focus());
+              }
             },
             
             tryAgain() {

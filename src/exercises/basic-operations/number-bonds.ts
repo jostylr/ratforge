@@ -71,7 +71,7 @@ export const numberBondsExercise: Exercise = {
         <div class="bond-diagram">
           <div class="bond-whole ${params.missingPosition === 'whole' ? 'missing' : ''}">
             ${params.missingPosition === 'whole' ? 
-              `<input type="number" x-model="answer" class="bond-input" min="0" max="20" :disabled="submitted">` : 
+              `<input type="number" x-model="answer" class="bond-input" min="0" max="20" :disabled="submitted" @keyup.enter="checkAnswer()" ${params.missingPosition === 'whole' ? 'autofocus' : ''}>` : 
               `<span class="bond-value">${wholeDisplay}</span>`
             }
           </div>
@@ -84,13 +84,13 @@ export const numberBondsExercise: Exercise = {
           <div class="bond-parts">
             <div class="bond-part ${params.missingPosition === 'part1' ? 'missing' : ''}">
               ${params.missingPosition === 'part1' ? 
-                `<input type="number" x-model="answer" class="bond-input" min="0" max="20" :disabled="submitted">` : 
+                `<input type="number" x-model="answer" class="bond-input" min="0" max="20" :disabled="submitted" @keyup.enter="checkAnswer()" ${params.missingPosition === 'part1' ? 'autofocus' : ''}>` : 
                 `<span class="bond-value">${part1Display}</span>`
               }
             </div>
             <div class="bond-part ${params.missingPosition === 'part2' ? 'missing' : ''}">
               ${params.missingPosition === 'part2' ? 
-                `<input type="number" x-model="answer" class="bond-input" min="0" max="20" :disabled="submitted">` : 
+                `<input type="number" x-model="answer" class="bond-input" min="0" max="20" :disabled="submitted" @keyup.enter="checkAnswer()" ${params.missingPosition === 'part2' ? 'autofocus' : ''}>` : 
                 `<span class="bond-value">${part2Display}</span>`
               }
             </div>

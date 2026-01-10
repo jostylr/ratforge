@@ -66,7 +66,7 @@ export const sharingExercise: Exercise = {
     }
     
     return `
-      <div class="exercise-container" x-data="sharingExercise()">
+      <div class="exercise-container" x-data="sharingExercise()" x-init="$nextTick(() => $refs.mainInput?.focus())">
         <div class="exercise-prompt">
           <h2>Share ${params.total} items among ${params.groups} friends equally</h2>
           <p class="exercise-hint">How many does each friend get?</p>
@@ -86,6 +86,7 @@ export const sharingExercise: Exercise = {
           <label>Each friend gets:</label>
           <input type="number" 
                  x-model="answer" 
+                 x-ref="mainInput"
                  min="1" 
                  max="50"
                  class="answer-input"
@@ -93,6 +94,28 @@ export const sharingExercise: Exercise = {
                  @keyup.enter="checkAnswer()">
         </div>
         
+        <div class="numpad-section">
+          <button type="button" class="numpad-toggle" @click="showNumpad = !showNumpad">
+            <span x-text="showNumpad ? '⌨️ Hide Numpad' : '🔢 Show Numpad'"></span>
+          </button>
+          <div class="number-pad" x-show="showNumpad" x-cloak>
+            <div class="pad-grid">
+              <button type="button" class="pad-btn" @click="answer = (answer || '') + '7'" :disabled="submitted">7</button>
+              <button type="button" class="pad-btn" @click="answer = (answer || '') + '8'" :disabled="submitted">8</button>
+              <button type="button" class="pad-btn" @click="answer = (answer || '') + '9'" :disabled="submitted">9</button>
+              <button type="button" class="pad-btn" @click="answer = (answer || '') + '4'" :disabled="submitted">4</button>
+              <button type="button" class="pad-btn" @click="answer = (answer || '') + '5'" :disabled="submitted">5</button>
+              <button type="button" class="pad-btn" @click="answer = (answer || '') + '6'" :disabled="submitted">6</button>
+              <button type="button" class="pad-btn" @click="answer = (answer || '') + '1'" :disabled="submitted">1</button>
+              <button type="button" class="pad-btn" @click="answer = (answer || '') + '2'" :disabled="submitted">2</button>
+              <button type="button" class="pad-btn" @click="answer = (answer || '') + '3'" :disabled="submitted">3</button>
+              <button type="button" class="pad-btn pad-special" @click="answer = ''" :disabled="submitted">C</button>
+              <button type="button" class="pad-btn" @click="answer = (answer || '') + '0'" :disabled="submitted">0</button>
+              <button type="button" class="pad-btn pad-enter" @click="checkAnswer()" :disabled="submitted || !answer">↵</button>
+            </div>
+          </div>
+        </div>
+
         <div class="exercise-controls">
           <button class="btn btn-primary btn-large"
                   @click="checkAnswer()"
@@ -110,7 +133,7 @@ export const sharingExercise: Exercise = {
             <button class="btn btn-primary" @click="tryAgain()" x-show="!correct">
               Try Again
             </button>
-            <a href="/practice/div-sharing" class="btn btn-primary" x-show="correct">
+            <a href="/practice/div-sharing" class="btn btn-primary" x-show="correct" x-ref="nextBtn">
               Next Exercise
             </a>
             <a :href="dashboardUrl" class="btn btn-secondary">
@@ -186,12 +209,57 @@ export const sharingExercise: Exercise = {
           outline: none;
           border-color: var(--color-primary);
         }
+        .numpad-section {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 0.5rem;
+          margin-bottom: 1rem;
+        }
+        .numpad-toggle {
+          padding: 0.5rem 1rem;
+          font-size: 0.875rem;
+          border: 1px solid var(--color-border);
+          border-radius: var(--radius-md);
+          background: var(--color-surface);
+          cursor: pointer;
+        }
+        .number-pad {
+          padding: 1rem;
+          background: var(--color-bg);
+          border-radius: var(--radius-lg);
+          border: 1px solid var(--color-border);
+        }
+        .pad-grid {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 0.5rem;
+        }
+        .pad-btn {
+          width: 55px;
+          height: 45px;
+          font-size: 1.25rem;
+          font-weight: 600;
+          border: 1px solid var(--color-border);
+          border-radius: var(--radius-md);
+          background: var(--color-surface);
+          cursor: pointer;
+          transition: all 0.15s;
+        }
+        .pad-btn:hover:not(:disabled) {
+          background: var(--color-primary);
+          color: white;
+        }
+        .pad-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .pad-special { background: var(--color-bg); }
+        .pad-enter { background: var(--color-primary); color: white; }
       </style>
       
       <script>
         function sharingExercise() {
           return {
             answer: '',
+            showNumpad: true,
             submitted: false,
             correct: false,
             feedback: '',
@@ -214,6 +282,9 @@ export const sharingExercise: Exercise = {
               this.correct = result.correct;
               this.feedback = result.feedback;
               this.submitted = true;
+              if (result.correct) {
+                this.$nextTick(() => this.$refs.nextBtn?.focus());
+              }
             },
             
             tryAgain() {

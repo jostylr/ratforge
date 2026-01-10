@@ -94,7 +94,7 @@ export const missingNumberExercise: Exercise = {
       `<span class="eq-num">${params.result}</span>`;
     
     return `
-      <div class="exercise-container" x-data="missingNumberExercise()">
+      <div class="exercise-container" x-data="missingNumberExercise()" x-init="$nextTick(() => document.querySelector('.eq-input')?.focus())">
         <div class="exercise-prompt">
           <h2>Find the missing number!</h2>
         </div>
@@ -126,7 +126,7 @@ export const missingNumberExercise: Exercise = {
             <button class="btn btn-primary" @click="tryAgain()" x-show="!correct">
               Try Again
             </button>
-            <a href="/practice/algebra-missing" class="btn btn-primary" x-show="correct">
+            <a href="/practice/algebra-missing" class="btn btn-primary" x-show="correct" x-ref="nextBtn">
               Next Exercise
             </a>
             <a :href="dashboardUrl" class="btn btn-secondary">
@@ -200,6 +200,9 @@ export const missingNumberExercise: Exercise = {
               this.correct = result.correct;
               this.feedback = result.feedback;
               this.submitted = true;
+              if (result.correct) {
+                this.$nextTick(() => this.$refs.nextBtn?.focus());
+              }
             },
             
             tryAgain() {

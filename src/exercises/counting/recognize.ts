@@ -132,7 +132,7 @@ export const recognizeNumbersExercise: Exercise = {
             <button class="btn btn-primary" @click="tryAgain()" x-show="!correct">
               Try Again
             </button>
-            <a href="/practice/counting-recognize" class="btn btn-primary" x-show="correct">
+            <a href="/practice/counting-recognize" class="btn btn-primary" x-show="correct" x-ref="nextBtn">
               Next Exercise
             </a>
             <a :href="dashboardUrl" class="btn btn-secondary">
@@ -235,6 +235,9 @@ export const recognizeNumbersExercise: Exercise = {
               this.correct = result.correct;
               this.feedback = result.feedback;
               this.submitted = true;
+              if (result.correct) {
+                this.$nextTick(() => this.$refs.nextBtn?.focus());
+              }
             },
             
             tryAgain() {

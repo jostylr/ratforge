@@ -87,7 +87,7 @@ export const partsWholeExercise: Exercise = {
     }
     
     return `
-      <div class="exercise-container" x-data="partsWholeExercise()">
+      <div class="exercise-container" x-data="partsWholeExercise()" x-init="$nextTick(() => document.querySelector('.fraction-input')?.focus())">
         <div class="exercise-prompt">
           <h2>What fraction is shaded?</h2>
           <p class="exercise-hint">Write as numerator/denominator (e.g., 1/4)</p>
@@ -123,7 +123,7 @@ export const partsWholeExercise: Exercise = {
             <button class="btn btn-primary" @click="tryAgain()" x-show="!correct">
               Try Again
             </button>
-            <a href="/practice/frac-parts" class="btn btn-primary" x-show="correct">
+            <a href="/practice/frac-parts" class="btn btn-primary" x-show="correct" x-ref="nextBtn">
               Next Exercise
             </a>
             <a :href="dashboardUrl" class="btn btn-secondary">
@@ -205,6 +205,9 @@ export const partsWholeExercise: Exercise = {
               this.correct = result.correct;
               this.feedback = result.feedback;
               this.submitted = true;
+              if (result.correct) {
+                this.$nextTick(() => this.$refs.nextBtn?.focus());
+              }
             },
             
             tryAgain() {

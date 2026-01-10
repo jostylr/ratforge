@@ -56,7 +56,7 @@ export const hourHalfExercise: Exercise = {
     const minuteAngle = params.isHalf ? 180 : 0;
     
     return `
-      <div class="exercise-container" x-data="hourHalfExercise()">
+      <div class="exercise-container" x-data="hourHalfExercise()" x-init="$nextTick(() => document.querySelector('.time-input')?.focus())">
         <div class="exercise-prompt">
           <h2>What time is it?</h2>
         </div>
@@ -117,7 +117,7 @@ export const hourHalfExercise: Exercise = {
             <button class="btn btn-primary" @click="tryAgain()" x-show="!correct">
               Try Again
             </button>
-            <a href="/practice/time-hour-half" class="btn btn-primary" x-show="correct">
+            <a href="/practice/time-hour-half" class="btn btn-primary" x-show="correct" x-ref="nextBtn">
               Next Exercise
             </a>
             <a :href="dashboardUrl" class="btn btn-secondary">
@@ -184,6 +184,9 @@ export const hourHalfExercise: Exercise = {
               this.correct = result.correct;
               this.feedback = result.feedback;
               this.submitted = true;
+              if (result.correct) {
+                this.$nextTick(() => this.$refs.nextBtn?.focus());
+              }
             },
             
             tryAgain() {

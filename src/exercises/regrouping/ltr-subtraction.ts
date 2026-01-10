@@ -102,7 +102,8 @@ export const ltrSubtractionExercise: Exercise = {
                      x-model="tensInput"
                      @input="onTensInput()"
                      :disabled="submitted"
-                     class="digit-input">
+                     class="digit-input"
+                     autofocus>
             </div>
             <div class="borrow-indicator" x-show="showBorrow">
               <button type="button" 

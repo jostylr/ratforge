@@ -68,7 +68,7 @@ export const moneyCountingExercise: Exercise = {
     for (let i = 0; i < params.pennies; i++) coins += '<span class="coin penny">1¢</span>';
     
     return `
-      <div class="exercise-container" x-data="moneyCountingExercise()">
+      <div class="exercise-container" x-data="moneyCountingExercise()" x-init="$nextTick(() => document.querySelector('.money-input')?.focus())">
         <div class="exercise-prompt">
           <h2>How much money is this?</h2>
           <p class="exercise-hint">Count all the coins. Enter your answer in cents (e.g., 75) or dollars (e.g., 0.75)</p>
@@ -105,7 +105,7 @@ export const moneyCountingExercise: Exercise = {
             <button class="btn btn-primary" @click="tryAgain()" x-show="!correct">
               Try Again
             </button>
-            <a href="/practice/money-counting" class="btn btn-primary" x-show="correct">
+            <a href="/practice/money-counting" class="btn btn-primary" x-show="correct" x-ref="nextBtn">
               Next Exercise
             </a>
             <a :href="dashboardUrl" class="btn btn-secondary">
@@ -211,6 +211,9 @@ export const moneyCountingExercise: Exercise = {
               this.correct = result.correct;
               this.feedback = result.feedback;
               this.submitted = true;
+              if (result.correct) {
+                this.$nextTick(() => this.$refs.nextBtn?.focus());
+              }
             },
             
             tryAgain() {

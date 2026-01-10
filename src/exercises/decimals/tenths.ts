@@ -53,7 +53,7 @@ export const tenthsExercise: Exercise = {
     }
     
     return `
-      <div class="exercise-container" x-data="tenthsExercise()">
+      <div class="exercise-container" x-data="tenthsExercise()" x-init="$nextTick(() => document.querySelector('.decimal-input')?.focus())">
         <div class="exercise-prompt">
           <h2>What decimal is shown?</h2>
           <p class="exercise-hint">${params.tenths} out of 10 columns are shaded.</p>
@@ -96,7 +96,7 @@ export const tenthsExercise: Exercise = {
             <button class="btn btn-primary" @click="tryAgain()" x-show="!correct">
               Try Again
             </button>
-            <a href="/practice/dec-tenths" class="btn btn-primary" x-show="correct">
+            <a href="/practice/dec-tenths" class="btn btn-primary" x-show="correct" x-ref="nextBtn">
               Next Exercise
             </a>
             <a :href="dashboardUrl" class="btn btn-secondary">
@@ -180,6 +180,9 @@ export const tenthsExercise: Exercise = {
               this.correct = result.correct;
               this.feedback = result.feedback;
               this.submitted = true;
+              if (result.correct) {
+                this.$nextTick(() => this.$refs.nextBtn?.focus());
+              }
             },
             
             tryAgain() {
