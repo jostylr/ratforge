@@ -35,8 +35,74 @@ export function dashboardPage(userId: string, token: string): string {
           </div>
         </div>
 
+        <section class="topics-section">
+          <h2>Topics</h2>
+          <div class="topics-grid">
+            <a href="/counting" class="topic-card">
+              <span class="topic-icon">🔢</span>
+              <span class="topic-name">Counting</span>
+            </a>
+            <a href="/basic-operations" class="topic-card">
+              <span class="topic-icon">➕</span>
+              <span class="topic-name">Add & Subtract</span>
+            </a>
+            <a href="/regrouping" class="topic-card">
+              <span class="topic-icon">🧮</span>
+              <span class="topic-name">Regrouping</span>
+            </a>
+            <a href="/multiplication" class="topic-card">
+              <span class="topic-icon">✖️</span>
+              <span class="topic-name">Multiplication</span>
+            </a>
+            <a href="/division" class="topic-card">
+              <span class="topic-icon">➗</span>
+              <span class="topic-name">Division</span>
+            </a>
+            <a href="/fractions" class="topic-card">
+              <span class="topic-icon">½</span>
+              <span class="topic-name">Fractions</span>
+            </a>
+            <a href="/decimals" class="topic-card">
+              <span class="topic-icon">0.5</span>
+              <span class="topic-name">Decimals</span>
+            </a>
+            <a href="/patterns" class="topic-card">
+              <span class="topic-icon">🔢</span>
+              <span class="topic-name">Patterns</span>
+            </a>
+            <a href="/geometry" class="topic-card">
+              <span class="topic-icon">📐</span>
+              <span class="topic-name">Geometry</span>
+            </a>
+            <a href="/measurement" class="topic-card">
+              <span class="topic-icon">📏</span>
+              <span class="topic-name">Measurement</span>
+            </a>
+            <a href="/time" class="topic-card">
+              <span class="topic-icon">🕐</span>
+              <span class="topic-name">Time</span>
+            </a>
+            <a href="/money" class="topic-card">
+              <span class="topic-icon">💵</span>
+              <span class="topic-name">Money</span>
+            </a>
+            <a href="/probability" class="topic-card">
+              <span class="topic-icon">🎲</span>
+              <span class="topic-name">Probability</span>
+            </a>
+            <a href="/data" class="topic-card">
+              <span class="topic-icon">📊</span>
+              <span class="topic-name">Data</span>
+            </a>
+            <a href="/algebra" class="topic-card">
+              <span class="topic-icon">🧮</span>
+              <span class="topic-name">Algebra</span>
+            </a>
+          </div>
+        </section>
+
         <section class="exercises-section">
-          <h2>Exercises</h2>
+          <h2>Quick Practice</h2>
           <div class="exercise-list">
             <a href="/practice/counting-basket" class="exercise-card">
               <div class="exercise-icon">🐱</div>
@@ -176,6 +242,40 @@ export function dashboardPage(userId: string, token: string): string {
       }
       .badge-new {
         background: var(--color-success);
+      }
+      .topics-section {
+        margin-bottom: 2rem;
+      }
+      .topics-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+        gap: 0.75rem;
+      }
+      .topic-card {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 1rem;
+        background: var(--color-surface);
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius-lg);
+        text-decoration: none;
+        color: inherit;
+        transition: all 0.2s;
+      }
+      .topic-card:hover {
+        border-color: var(--color-primary);
+        box-shadow: var(--shadow-md);
+        transform: translateY(-2px);
+      }
+      .topic-icon {
+        font-size: 2rem;
+      }
+      .topic-name {
+        font-size: 0.875rem;
+        font-weight: 500;
+        text-align: center;
       }
     `,
   });

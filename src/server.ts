@@ -13,6 +13,26 @@ import { getExercise } from "./exercises";
 import { logExerciseStart, logExerciseAttempt } from "./db/events";
 import type { ExerciseInstance } from "./exercises/types";
 
+// Topic page imports
+import { countingTopicPage } from "./templates/pages/topics/counting";
+import { geometryTopicPage } from "./templates/pages/topics/geometry";
+import { measurementTopicPage } from "./templates/pages/topics/measurement";
+import { basicOperationsTopicPage } from "./templates/pages/topics/basic-operations";
+import { regroupingTopicPage } from "./templates/pages/topics/regrouping";
+import { patternsTopicPage } from "./templates/pages/topics/patterns";
+import { multiplicationTopicPage } from "./templates/pages/topics/multiplication";
+import { divisionTopicPage } from "./templates/pages/topics/division";
+import { divisionStrategiesTopicPage } from "./templates/pages/topics/division-strategies";
+import { fractionsTopicPage } from "./templates/pages/topics/fractions";
+import { decimalsTopicPage } from "./templates/pages/topics/decimals";
+import { divisionAdvancedTopicPage } from "./templates/pages/topics/division-advanced";
+import { fractionsDecimalsAdvancedTopicPage } from "./templates/pages/topics/fractions-decimals-advanced";
+import { probabilityTopicPage } from "./templates/pages/topics/probability";
+import { dataTopicPage } from "./templates/pages/topics/data";
+import { timeTopicPage } from "./templates/pages/topics/time";
+import { moneyTopicPage } from "./templates/pages/topics/money";
+import { algebraTopicPage } from "./templates/pages/topics/algebra";
+
 // Import exercises to register them
 import "./exercises";
 
@@ -34,6 +54,41 @@ router.get("/", (req) => {
 });
 
 router.get("/about", () => html(aboutPage()));
+
+// Topic TOC pages (require auth)
+const topicRoutes = [
+  { path: "/counting", handler: countingTopicPage },
+  { path: "/geometry", handler: geometryTopicPage },
+  { path: "/measurement", handler: measurementTopicPage },
+  { path: "/basic-operations", handler: basicOperationsTopicPage },
+  { path: "/regrouping", handler: regroupingTopicPage },
+  { path: "/patterns", handler: patternsTopicPage },
+  { path: "/multiplication", handler: multiplicationTopicPage },
+  { path: "/division", handler: divisionTopicPage },
+  { path: "/division-strategies", handler: divisionStrategiesTopicPage },
+  { path: "/fractions", handler: fractionsTopicPage },
+  { path: "/decimals", handler: decimalsTopicPage },
+  { path: "/division-advanced", handler: divisionAdvancedTopicPage },
+  { path: "/fractions-decimals-advanced", handler: fractionsDecimalsAdvancedTopicPage },
+  { path: "/probability", handler: probabilityTopicPage },
+  { path: "/data", handler: dataTopicPage },
+  { path: "/time", handler: timeTopicPage },
+  { path: "/money", handler: moneyTopicPage },
+  { path: "/algebra", handler: algebraTopicPage },
+];
+
+for (const route of topicRoutes) {
+  router.get(route.path, (req) => {
+    const session = getSessionFromRequest(req);
+    if (!session) {
+      return new Response(null, {
+        status: 302,
+        headers: { Location: "/" },
+      });
+    }
+    return html(route.handler(session.token));
+  });
+}
 
 // Auth: Start new session (passwordless)
 router.get("/api/auth/start", (req) => {
