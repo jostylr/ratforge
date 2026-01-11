@@ -11,6 +11,7 @@ import { greaterLessExercise } from "./counting/greater-less";
 import { orderingExercise } from "./counting/ordering";
 import { numberNamesExercise } from "./counting/number-names";
 import { ordinalNumbersExercise } from "./counting/ordinal-numbers";
+import { romanNumeralsExercise } from "./counting/roman-numerals";
 
 // Basic operations exercises
 import { addWithin10Exercise } from "./basic-operations/add-within-10";
@@ -36,6 +37,7 @@ import { multWordProblemExercise } from "./multiplication/word-problems";
 import { multPropertiesExercise } from "./multiplication/properties";
 import { squareNumbersExercise } from "./multiplication/square-numbers";
 import { latticeExercise } from "./multiplication/lattice";
+import { multiplesExercise } from "./multiplication/multiples";
 
 // Division exercises
 import { sharingExercise } from "./division/sharing";
@@ -44,6 +46,8 @@ import { remainderExercise } from "./division/remainders";
 import { divWordProblemExercise } from "./division/word-problems";
 import { longDivisionExercise } from "./division/long-division";
 import { divisibilityExercise } from "./division/divisibility";
+import { primeNumbersExercise } from "./division/prime-numbers";
+import { factorsExercise } from "./division/factors";
 
 // Fractions exercises
 import { partsWholeExercise } from "./fractions/parts-whole";
@@ -59,6 +63,7 @@ import { multiplyFractionsExercise } from "./fractions/multiply";
 import { fractionOfNumberExercise } from "./fractions/fraction-of-number";
 import { divideFractionsExercise } from "./fractions/divide";
 import { subtractDiffDenomExercise } from "./fractions/subtract-different-denom";
+import { ratiosExercise } from "./fractions/ratios";
 
 // Decimals exercises
 import { tenthsExercise } from "./decimals/tenths";
@@ -139,6 +144,7 @@ registerExercise(greaterLessExercise);
 registerExercise(orderingExercise);
 registerExercise(numberNamesExercise);
 registerExercise(ordinalNumbersExercise);
+registerExercise(romanNumeralsExercise);
 
 // Basic operations
 registerExercise(addWithin10Exercise);
@@ -164,6 +170,7 @@ registerExercise(multWordProblemExercise);
 registerExercise(multPropertiesExercise);
 registerExercise(squareNumbersExercise);
 registerExercise(latticeExercise);
+registerExercise(multiplesExercise);
 
 // Division
 registerExercise(sharingExercise);
@@ -172,6 +179,8 @@ registerExercise(remainderExercise);
 registerExercise(divWordProblemExercise);
 registerExercise(longDivisionExercise);
 registerExercise(divisibilityExercise);
+registerExercise(primeNumbersExercise);
+registerExercise(factorsExercise);
 
 // Fractions
 registerExercise(partsWholeExercise);
@@ -187,6 +196,7 @@ registerExercise(multiplyFractionsExercise);
 registerExercise(fractionOfNumberExercise);
 registerExercise(divideFractionsExercise);
 registerExercise(subtractDiffDenomExercise);
+registerExercise(ratiosExercise);
 
 // Decimals
 registerExercise(tenthsExercise);

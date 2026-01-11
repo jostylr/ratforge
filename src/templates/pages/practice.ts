@@ -15,6 +15,7 @@ export function practicePage(token?: string): string {
       { id: "counting-ordering", title: "Order Numbers", desc: "Least to greatest" },
       { id: "counting-names", title: "Number Names", desc: "Words for numbers" },
       { id: "counting-ordinal", title: "Ordinal Numbers", desc: "First, second, third..." },
+      { id: "counting-roman", title: "Roman Numerals", desc: "I, V, X, L, C..." },
     ]},
     { category: "Basic Operations", items: [
       { id: "basic-add-10", title: "Add Within 10", desc: "Simple addition facts" },
@@ -40,6 +41,7 @@ export function practicePage(token?: string): string {
       { id: "mult-properties", title: "Properties", desc: "Commutative, identity, zero" },
       { id: "mult-squares", title: "Square Numbers", desc: "Numbers times themselves" },
       { id: "mult-lattice", title: "Lattice Method", desc: "Grid multiplication" },
+      { id: "mult-multiples", title: "Multiples", desc: "Find multiples of numbers" },
     ]},
     { category: "Division", items: [
       { id: "div-sharing", title: "Fair Sharing", desc: "Divide equally" },
@@ -48,6 +50,8 @@ export function practicePage(token?: string): string {
       { id: "div-word-problems", title: "Word Problems", desc: "Division stories" },
       { id: "div-long", title: "Long Division", desc: "Divide larger numbers" },
       { id: "div-divisibility", title: "Divisibility Rules", desc: "Check divisibility" },
+      { id: "div-prime", title: "Prime Numbers", desc: "Prime vs composite" },
+      { id: "div-factors", title: "Factors", desc: "Find factors of numbers" },
     ]},
     { category: "Fractions", items: [
       { id: "frac-parts", title: "Parts of a Whole", desc: "Identify fractions" },
@@ -63,6 +67,7 @@ export function practicePage(token?: string): string {
       { id: "frac-of-number", title: "Fraction of a Number", desc: "Find part of a whole" },
       { id: "frac-divide", title: "Divide Fractions", desc: "Keep-Change-Flip" },
       { id: "frac-sub-diff", title: "Subtract (Different Denom)", desc: "Unlike denominators" },
+      { id: "frac-ratios", title: "Ratios", desc: "Compare quantities" },
     ]},
     { category: "Decimals", items: [
       { id: "dec-tenths", title: "Tenths", desc: "Understand tenths" },
