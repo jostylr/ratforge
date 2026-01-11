@@ -12,6 +12,7 @@ export function practicePage(token?: string): string {
       { id: "counting-compare", title: "Compare Quantities", desc: "Compare two groups" },
       { id: "counting-odd-even", title: "Odd or Even", desc: "Identify odd and even numbers" },
       { id: "counting-greater-less", title: "Greater, Less, Equal", desc: "Compare with >, <, =" },
+      { id: "counting-ordering", title: "Order Numbers", desc: "Least to greatest" },
     ]},
     { category: "Basic Operations", items: [
       { id: "basic-add-10", title: "Add Within 10", desc: "Simple addition facts" },
@@ -19,6 +20,7 @@ export function practicePage(token?: string): string {
       { id: "basic-number-bonds", title: "Number Bonds", desc: "Part-part-whole relationships" },
       { id: "basic-doubles", title: "Doubles & Near Doubles", desc: "Double facts strategy" },
       { id: "basic-word-problems", title: "Word Problems", desc: "Addition & subtraction stories" },
+      { id: "basic-fact-families", title: "Fact Families", desc: "Related facts" },
     ]},
     { category: "Regrouping", items: [
       { id: "regrouping-complements", title: "Complements of 10", desc: "Make 10 strategy" },
@@ -35,21 +37,26 @@ export function practicePage(token?: string): string {
       { id: "div-sharing", title: "Fair Sharing", desc: "Divide equally" },
       { id: "div-facts", title: "Division Facts", desc: "Division facts practice" },
       { id: "div-remainders", title: "Remainders", desc: "Division with leftovers" },
+      { id: "div-word-problems", title: "Word Problems", desc: "Division stories" },
     ]},
     { category: "Fractions", items: [
       { id: "frac-parts", title: "Parts of a Whole", desc: "Identify fractions" },
       { id: "frac-compare", title: "Compare Fractions", desc: "Which is greater?" },
       { id: "frac-equivalent", title: "Equivalent Fractions", desc: "Find equal fractions" },
       { id: "frac-add-same", title: "Add Fractions", desc: "Same denominator" },
+      { id: "frac-sub-same", title: "Subtract Fractions", desc: "Same denominator" },
+      { id: "frac-mixed", title: "Mixed Numbers", desc: "Convert to/from improper" },
     ]},
     { category: "Decimals", items: [
       { id: "dec-tenths", title: "Tenths", desc: "Understand tenths" },
       { id: "dec-place-value", title: "Place Value", desc: "Decimal place values" },
       { id: "dec-add", title: "Add Decimals", desc: "Add decimal numbers" },
+      { id: "dec-compare", title: "Compare Decimals", desc: "Which is greater?" },
     ]},
     { category: "Time", items: [
       { id: "time-hour-half", title: "Hour & Half Hour", desc: "Read clocks" },
       { id: "time-elapsed", title: "Elapsed Time", desc: "Calculate time passed" },
+      { id: "time-quarter", title: "Quarter Hours", desc: "Tell time to :15, :30, :45" },
     ]},
     { category: "Money", items: [
       { id: "money-counting", title: "Counting Money", desc: "Count coins and bills" },
@@ -58,26 +65,33 @@ export function practicePage(token?: string): string {
     { category: "Patterns", items: [
       { id: "patterns-skip-2", title: "Skip Counting", desc: "Count by 2s, 5s, 10s" },
       { id: "patterns-shapes", title: "Shape Patterns", desc: "Find missing shapes" },
+      { id: "patterns-numbers", title: "Number Patterns", desc: "Find the rule" },
     ]},
     { category: "Algebra", items: [
       { id: "algebra-missing", title: "Missing Number", desc: "Find the unknown" },
+      { id: "algebra-solve", title: "Solve for X", desc: "Simple equations" },
     ]},
     { category: "Geometry", items: [
       { id: "geometry-shapes", title: "Identify Shapes", desc: "Name 2D shapes" },
       { id: "geometry-perimeter", title: "Perimeter", desc: "Add all sides" },
       { id: "geometry-area", title: "Area", desc: "Length × width" },
+      { id: "geometry-symmetry", title: "Symmetry", desc: "Lines of symmetry" },
     ]},
     { category: "Data", items: [
       { id: "data-bar-graph", title: "Bar Graphs", desc: "Read bar graphs" },
+      { id: "data-pictograph", title: "Pictographs", desc: "Read picture graphs" },
     ]},
     { category: "Probability", items: [
       { id: "prob-coin", title: "Coin Flip", desc: "Basic probability" },
+      { id: "prob-spinner", title: "Spinner", desc: "Spinner probability" },
     ]},
     { category: "Measurement", items: [
       { id: "measure-length", title: "Measure Length", desc: "Use a ruler" },
+      { id: "measure-weight", title: "Measure Weight", desc: "Read a scale" },
     ]},
     { category: "Place Value", items: [
       { id: "place-expanded", title: "Expanded Form", desc: "Hundreds, tens, ones" },
+      { id: "place-rounding", title: "Rounding", desc: "Round to nearest 10 or 100" },
     ]},
   ];
 
