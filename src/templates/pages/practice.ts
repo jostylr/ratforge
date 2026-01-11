@@ -14,6 +14,7 @@ export function practicePage(token?: string): string {
       { id: "counting-greater-less", title: "Greater, Less, Equal", desc: "Compare with >, <, =" },
       { id: "counting-ordering", title: "Order Numbers", desc: "Least to greatest" },
       { id: "counting-names", title: "Number Names", desc: "Words for numbers" },
+      { id: "counting-ordinal", title: "Ordinal Numbers", desc: "First, second, third..." },
     ]},
     { category: "Basic Operations", items: [
       { id: "basic-add-10", title: "Add Within 10", desc: "Simple addition facts" },
@@ -37,6 +38,7 @@ export function practicePage(token?: string): string {
       { id: "mult-word-problems", title: "Word Problems", desc: "Real-world multiplication" },
       { id: "mult-properties", title: "Properties", desc: "Commutative, identity, zero" },
       { id: "mult-squares", title: "Square Numbers", desc: "Numbers times themselves" },
+      { id: "mult-lattice", title: "Lattice Method", desc: "Grid multiplication" },
     ]},
     { category: "Division", items: [
       { id: "div-sharing", title: "Fair Sharing", desc: "Divide equally" },
@@ -44,6 +46,7 @@ export function practicePage(token?: string): string {
       { id: "div-remainders", title: "Remainders", desc: "Division with leftovers" },
       { id: "div-word-problems", title: "Word Problems", desc: "Division stories" },
       { id: "div-long", title: "Long Division", desc: "Divide larger numbers" },
+      { id: "div-divisibility", title: "Divisibility Rules", desc: "Check divisibility" },
     ]},
     { category: "Fractions", items: [
       { id: "frac-parts", title: "Parts of a Whole", desc: "Identify fractions" },
@@ -55,6 +58,8 @@ export function practicePage(token?: string): string {
       { id: "frac-number-line", title: "Number Line", desc: "Locate fractions" },
       { id: "frac-simplify", title: "Simplify", desc: "Reduce to lowest terms" },
       { id: "frac-add-diff", title: "Add (Different Denom)", desc: "Unlike denominators" },
+      { id: "frac-multiply", title: "Multiply Fractions", desc: "Fraction multiplication" },
+      { id: "frac-of-number", title: "Fraction of a Number", desc: "Find part of a whole" },
     ]},
     { category: "Decimals", items: [
       { id: "dec-tenths", title: "Tenths", desc: "Understand tenths" },
@@ -64,6 +69,7 @@ export function practicePage(token?: string): string {
       { id: "dec-subtract", title: "Subtract Decimals", desc: "Subtract decimal numbers" },
       { id: "dec-multiply", title: "Multiply Decimals", desc: "Multiply decimal numbers" },
       { id: "dec-to-frac", title: "Decimal to Fraction", desc: "Convert decimals" },
+      { id: "dec-percent", title: "Percentages", desc: "Find percent of numbers" },
     ]},
     { category: "Time", items: [
       { id: "time-hour-half", title: "Hour & Half Hour", desc: "Read clocks" },
@@ -85,6 +91,7 @@ export function practicePage(token?: string): string {
       { id: "algebra-missing", title: "Missing Number", desc: "Find the unknown" },
       { id: "algebra-solve", title: "Solve for X", desc: "Simple equations" },
       { id: "algebra-order", title: "Order of Operations", desc: "PEMDAS practice" },
+      { id: "algebra-io", title: "Input/Output Tables", desc: "Find the rule" },
     ]},
     { category: "Geometry", items: [
       { id: "geometry-shapes", title: "Identify Shapes", desc: "Name 2D shapes" },
@@ -93,6 +100,7 @@ export function practicePage(token?: string): string {
       { id: "geometry-symmetry", title: "Symmetry", desc: "Lines of symmetry" },
       { id: "geometry-angles", title: "Angles", desc: "Right, acute, obtuse" },
       { id: "geometry-3d", title: "3D Shapes", desc: "Cubes, spheres, cones" },
+      { id: "geometry-coords", title: "Coordinate Plane", desc: "Plot and identify points" },
     ]},
     { category: "Data", items: [
       { id: "data-bar-graph", title: "Bar Graphs", desc: "Read bar graphs" },
@@ -108,11 +116,14 @@ export function practicePage(token?: string): string {
       { id: "measure-length", title: "Measure Length", desc: "Use a ruler" },
       { id: "measure-weight", title: "Measure Weight", desc: "Read a scale" },
       { id: "measure-capacity", title: "Capacity", desc: "Cups, pints, quarts, gallons" },
+      { id: "measure-temp", title: "Temperature", desc: "Read thermometers" },
+      { id: "measure-time-convert", title: "Time Conversion", desc: "Minutes, hours, days" },
     ]},
     { category: "Place Value", items: [
       { id: "place-expanded", title: "Expanded Form", desc: "Hundreds, tens, ones" },
       { id: "place-rounding", title: "Rounding", desc: "Round to nearest 10 or 100" },
       { id: "place-compare", title: "Compare Numbers", desc: "Compare large numbers" },
+      { id: "place-standard", title: "Standard Form", desc: "Standard, expanded, word form" },
     ]},
   ];
 

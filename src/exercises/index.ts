@@ -10,6 +10,7 @@ import { oddEvenExercise } from "./counting/odd-even";
 import { greaterLessExercise } from "./counting/greater-less";
 import { orderingExercise } from "./counting/ordering";
 import { numberNamesExercise } from "./counting/number-names";
+import { ordinalNumbersExercise } from "./counting/ordinal-numbers";
 
 // Basic operations exercises
 import { addWithin10Exercise } from "./basic-operations/add-within-10";
@@ -33,6 +34,7 @@ import { boxMethodExercise } from "./multiplication/box-method";
 import { multWordProblemExercise } from "./multiplication/word-problems";
 import { multPropertiesExercise } from "./multiplication/properties";
 import { squareNumbersExercise } from "./multiplication/square-numbers";
+import { latticeExercise } from "./multiplication/lattice";
 
 // Division exercises
 import { sharingExercise } from "./division/sharing";
@@ -40,6 +42,7 @@ import { divisionFactsExercise } from "./division/facts";
 import { remainderExercise } from "./division/remainders";
 import { divWordProblemExercise } from "./division/word-problems";
 import { longDivisionExercise } from "./division/long-division";
+import { divisibilityExercise } from "./division/divisibility";
 
 // Fractions exercises
 import { partsWholeExercise } from "./fractions/parts-whole";
@@ -51,6 +54,8 @@ import { mixedNumberExercise } from "./fractions/mixed-numbers";
 import { fractionNumberLineExercise } from "./fractions/number-line";
 import { simplifyFractionExercise } from "./fractions/simplify";
 import { addDiffDenomExercise } from "./fractions/add-different-denom";
+import { multiplyFractionsExercise } from "./fractions/multiply";
+import { fractionOfNumberExercise } from "./fractions/fraction-of-number";
 
 // Decimals exercises
 import { tenthsExercise } from "./decimals/tenths";
@@ -60,6 +65,7 @@ import { compareDecimalsExercise } from "./decimals/compare-decimals";
 import { subtractDecimalsExercise } from "./decimals/subtract-decimals";
 import { multiplyDecimalsExercise } from "./decimals/multiply-decimals";
 import { decimalToFractionExercise } from "./decimals/decimal-to-fraction";
+import { percentExercise } from "./decimals/percent";
 
 // Time exercises
 import { hourHalfExercise } from "./time/hour-half";
@@ -81,6 +87,7 @@ import { numberPatternExercise } from "./patterns/number-patterns";
 import { missingNumberExercise } from "./algebra/missing-number";
 import { solveEquationExercise } from "./algebra/solve-equation";
 import { orderOperationsExercise } from "./algebra/order-operations";
+import { inputOutputExercise } from "./algebra/input-output";
 
 // Geometry exercises
 import { shapesExercise } from "./geometry/shapes";
@@ -89,6 +96,7 @@ import { areaExercise } from "./geometry/area";
 import { symmetryExercise } from "./geometry/symmetry";
 import { anglesExercise } from "./geometry/angles";
 import { shapes3DExercise } from "./geometry/3d-shapes";
+import { coordinatePlaneExercise } from "./geometry/coordinate-plane";
 
 // Data exercises
 import { barGraphExercise } from "./data/bar-graph";
@@ -104,11 +112,14 @@ import { spinnerExercise } from "./probability/spinner";
 import { lengthExercise } from "./measurement/length";
 import { weightExercise } from "./measurement/weight";
 import { capacityExercise } from "./measurement/capacity";
+import { temperatureExercise } from "./measurement/temperature";
+import { timeConversionExercise } from "./measurement/time-conversion";
 
 // Place value exercises
 import { expandedFormExercise } from "./place-value/expanded-form";
 import { roundingExercise } from "./place-value/rounding";
 import { compareNumbersExercise } from "./place-value/compare-numbers";
+import { standardFormExercise } from "./place-value/standard-form";
 
 // Register all exercises
 // Counting
@@ -121,6 +132,7 @@ registerExercise(oddEvenExercise);
 registerExercise(greaterLessExercise);
 registerExercise(orderingExercise);
 registerExercise(numberNamesExercise);
+registerExercise(ordinalNumbersExercise);
 
 // Basic operations
 registerExercise(addWithin10Exercise);
@@ -144,6 +156,7 @@ registerExercise(boxMethodExercise);
 registerExercise(multWordProblemExercise);
 registerExercise(multPropertiesExercise);
 registerExercise(squareNumbersExercise);
+registerExercise(latticeExercise);
 
 // Division
 registerExercise(sharingExercise);
@@ -151,6 +164,7 @@ registerExercise(divisionFactsExercise);
 registerExercise(remainderExercise);
 registerExercise(divWordProblemExercise);
 registerExercise(longDivisionExercise);
+registerExercise(divisibilityExercise);
 
 // Fractions
 registerExercise(partsWholeExercise);
@@ -162,6 +176,8 @@ registerExercise(mixedNumberExercise);
 registerExercise(fractionNumberLineExercise);
 registerExercise(simplifyFractionExercise);
 registerExercise(addDiffDenomExercise);
+registerExercise(multiplyFractionsExercise);
+registerExercise(fractionOfNumberExercise);
 
 // Decimals
 registerExercise(tenthsExercise);
@@ -171,6 +187,7 @@ registerExercise(compareDecimalsExercise);
 registerExercise(subtractDecimalsExercise);
 registerExercise(multiplyDecimalsExercise);
 registerExercise(decimalToFractionExercise);
+registerExercise(percentExercise);
 
 // Time
 registerExercise(hourHalfExercise);
@@ -192,6 +209,7 @@ registerExercise(numberPatternExercise);
 registerExercise(missingNumberExercise);
 registerExercise(solveEquationExercise);
 registerExercise(orderOperationsExercise);
+registerExercise(inputOutputExercise);
 
 // Geometry
 registerExercise(shapesExercise);
@@ -200,6 +218,7 @@ registerExercise(areaExercise);
 registerExercise(symmetryExercise);
 registerExercise(anglesExercise);
 registerExercise(shapes3DExercise);
+registerExercise(coordinatePlaneExercise);
 
 // Data
 registerExercise(barGraphExercise);
@@ -215,11 +234,14 @@ registerExercise(spinnerExercise);
 registerExercise(lengthExercise);
 registerExercise(weightExercise);
 registerExercise(capacityExercise);
+registerExercise(temperatureExercise);
+registerExercise(timeConversionExercise);
 
 // Place value
 registerExercise(expandedFormExercise);
 registerExercise(roundingExercise);
 registerExercise(compareNumbersExercise);
+registerExercise(standardFormExercise);
 
 export * from "./types";
 export * from "./registry";
