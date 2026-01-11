@@ -21,6 +21,7 @@ import { addSubWordProblemExercise } from "./basic-operations/word-problems";
 import { factFamilyExercise } from "./basic-operations/fact-families";
 import { tensOnesExercise } from "./basic-operations/tens-ones";
 import { mentalMathExercise } from "./basic-operations/mental-math";
+import { estimationExercise } from "./basic-operations/estimation";
 
 // Regrouping exercises
 import { complementsExercise } from "./regrouping/complements";
@@ -56,6 +57,8 @@ import { simplifyFractionExercise } from "./fractions/simplify";
 import { addDiffDenomExercise } from "./fractions/add-different-denom";
 import { multiplyFractionsExercise } from "./fractions/multiply";
 import { fractionOfNumberExercise } from "./fractions/fraction-of-number";
+import { divideFractionsExercise } from "./fractions/divide";
+import { subtractDiffDenomExercise } from "./fractions/subtract-different-denom";
 
 // Decimals exercises
 import { tenthsExercise } from "./decimals/tenths";
@@ -88,6 +91,7 @@ import { missingNumberExercise } from "./algebra/missing-number";
 import { solveEquationExercise } from "./algebra/solve-equation";
 import { orderOperationsExercise } from "./algebra/order-operations";
 import { inputOutputExercise } from "./algebra/input-output";
+import { expressionsExercise } from "./algebra/expressions";
 
 // Geometry exercises
 import { shapesExercise } from "./geometry/shapes";
@@ -97,12 +101,14 @@ import { symmetryExercise } from "./geometry/symmetry";
 import { anglesExercise } from "./geometry/angles";
 import { shapes3DExercise } from "./geometry/3d-shapes";
 import { coordinatePlaneExercise } from "./geometry/coordinate-plane";
+import { volumeExercise } from "./geometry/volume";
 
 // Data exercises
 import { barGraphExercise } from "./data/bar-graph";
 import { pictographExercise } from "./data/pictograph";
 import { tallyChartExercise } from "./data/tally-chart";
 import { meanMedianExercise } from "./data/mean-median";
+import { lineGraphExercise } from "./data/line-graph";
 
 // Probability exercises
 import { coinFlipExercise } from "./probability/coin-flip";
@@ -143,6 +149,7 @@ registerExercise(addSubWordProblemExercise);
 registerExercise(factFamilyExercise);
 registerExercise(tensOnesExercise);
 registerExercise(mentalMathExercise);
+registerExercise(estimationExercise);
 
 // Regrouping
 registerExercise(complementsExercise);
@@ -178,6 +185,8 @@ registerExercise(simplifyFractionExercise);
 registerExercise(addDiffDenomExercise);
 registerExercise(multiplyFractionsExercise);
 registerExercise(fractionOfNumberExercise);
+registerExercise(divideFractionsExercise);
+registerExercise(subtractDiffDenomExercise);
 
 // Decimals
 registerExercise(tenthsExercise);
@@ -210,6 +219,7 @@ registerExercise(missingNumberExercise);
 registerExercise(solveEquationExercise);
 registerExercise(orderOperationsExercise);
 registerExercise(inputOutputExercise);
+registerExercise(expressionsExercise);
 
 // Geometry
 registerExercise(shapesExercise);
@@ -219,12 +229,14 @@ registerExercise(symmetryExercise);
 registerExercise(anglesExercise);
 registerExercise(shapes3DExercise);
 registerExercise(coordinatePlaneExercise);
+registerExercise(volumeExercise);
 
 // Data
 registerExercise(barGraphExercise);
 registerExercise(pictographExercise);
 registerExercise(tallyChartExercise);
 registerExercise(meanMedianExercise);
+registerExercise(lineGraphExercise);
 
 // Probability
 registerExercise(coinFlipExercise);

@@ -25,6 +25,7 @@ export function practicePage(token?: string): string {
       { id: "basic-fact-families", title: "Fact Families", desc: "Related facts" },
       { id: "basic-tens-ones", title: "Tens and Ones", desc: "Place value basics" },
       { id: "basic-mental", title: "Mental Math", desc: "Quick calculations" },
+      { id: "basic-estimate", title: "Estimation", desc: "Round to estimate" },
     ]},
     { category: "Regrouping", items: [
       { id: "regrouping-complements", title: "Complements of 10", desc: "Make 10 strategy" },
@@ -60,6 +61,8 @@ export function practicePage(token?: string): string {
       { id: "frac-add-diff", title: "Add (Different Denom)", desc: "Unlike denominators" },
       { id: "frac-multiply", title: "Multiply Fractions", desc: "Fraction multiplication" },
       { id: "frac-of-number", title: "Fraction of a Number", desc: "Find part of a whole" },
+      { id: "frac-divide", title: "Divide Fractions", desc: "Keep-Change-Flip" },
+      { id: "frac-sub-diff", title: "Subtract (Different Denom)", desc: "Unlike denominators" },
     ]},
     { category: "Decimals", items: [
       { id: "dec-tenths", title: "Tenths", desc: "Understand tenths" },
@@ -92,6 +95,7 @@ export function practicePage(token?: string): string {
       { id: "algebra-solve", title: "Solve for X", desc: "Simple equations" },
       { id: "algebra-order", title: "Order of Operations", desc: "PEMDAS practice" },
       { id: "algebra-io", title: "Input/Output Tables", desc: "Find the rule" },
+      { id: "algebra-expr", title: "Evaluate Expressions", desc: "Substitute and solve" },
     ]},
     { category: "Geometry", items: [
       { id: "geometry-shapes", title: "Identify Shapes", desc: "Name 2D shapes" },
@@ -101,12 +105,14 @@ export function practicePage(token?: string): string {
       { id: "geometry-angles", title: "Angles", desc: "Right, acute, obtuse" },
       { id: "geometry-3d", title: "3D Shapes", desc: "Cubes, spheres, cones" },
       { id: "geometry-coords", title: "Coordinate Plane", desc: "Plot and identify points" },
+      { id: "geometry-volume", title: "Volume", desc: "Calculate 3D space" },
     ]},
     { category: "Data", items: [
       { id: "data-bar-graph", title: "Bar Graphs", desc: "Read bar graphs" },
       { id: "data-pictograph", title: "Pictographs", desc: "Read picture graphs" },
       { id: "data-tally", title: "Tally Charts", desc: "Read tally marks" },
       { id: "data-mean-median", title: "Mean, Median, Range", desc: "Analyze data sets" },
+      { id: "data-line-graph", title: "Line Graphs", desc: "Read trends over time" },
     ]},
     { category: "Probability", items: [
       { id: "prob-coin", title: "Coin Flip", desc: "Basic probability" },
