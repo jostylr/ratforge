@@ -6,6 +6,8 @@ import { subitizeExercise } from "./counting/subitize";
 import { recognizeNumbersExercise } from "./counting/recognize";
 import { countObjectsExercise } from "./counting/objects";
 import { compareQuantitiesExercise } from "./counting/compare";
+import { oddEvenExercise } from "./counting/odd-even";
+import { greaterLessExercise } from "./counting/greater-less";
 
 // Basic operations exercises
 import { addWithin10Exercise } from "./basic-operations/add-within-10";
@@ -28,15 +30,18 @@ import { multWordProblemExercise } from "./multiplication/word-problems";
 // Division exercises
 import { sharingExercise } from "./division/sharing";
 import { divisionFactsExercise } from "./division/facts";
+import { remainderExercise } from "./division/remainders";
 
 // Fractions exercises
 import { partsWholeExercise } from "./fractions/parts-whole";
 import { fractionCompareExercise } from "./fractions/compare";
 import { equivalentFractionExercise } from "./fractions/equivalent";
+import { addFractionsExercise } from "./fractions/add-same-denom";
 
 // Decimals exercises
 import { tenthsExercise } from "./decimals/tenths";
 import { decimalPlaceValueExercise } from "./decimals/place-value";
+import { addDecimalsExercise } from "./decimals/add-decimals";
 
 // Time exercises
 import { hourHalfExercise } from "./time/hour-half";
@@ -44,6 +49,7 @@ import { elapsedTimeExercise } from "./time/elapsed";
 
 // Money exercises
 import { moneyCountingExercise } from "./money/counting";
+import { makingChangeExercise } from "./money/making-change";
 
 // Patterns exercises
 import { skipCountExercise } from "./patterns/skip-count";
@@ -54,6 +60,8 @@ import { missingNumberExercise } from "./algebra/missing-number";
 
 // Geometry exercises
 import { shapesExercise } from "./geometry/shapes";
+import { perimeterExercise } from "./geometry/perimeter";
+import { areaExercise } from "./geometry/area";
 
 // Data exercises
 import { barGraphExercise } from "./data/bar-graph";
@@ -74,6 +82,8 @@ registerExercise(subitizeExercise);
 registerExercise(recognizeNumbersExercise);
 registerExercise(countObjectsExercise);
 registerExercise(compareQuantitiesExercise);
+registerExercise(oddEvenExercise);
+registerExercise(greaterLessExercise);
 
 // Basic operations
 registerExercise(addWithin10Exercise);
@@ -96,15 +106,18 @@ registerExercise(multWordProblemExercise);
 // Division
 registerExercise(sharingExercise);
 registerExercise(divisionFactsExercise);
+registerExercise(remainderExercise);
 
 // Fractions
 registerExercise(partsWholeExercise);
 registerExercise(fractionCompareExercise);
 registerExercise(equivalentFractionExercise);
+registerExercise(addFractionsExercise);
 
 // Decimals
 registerExercise(tenthsExercise);
 registerExercise(decimalPlaceValueExercise);
+registerExercise(addDecimalsExercise);
 
 // Time
 registerExercise(hourHalfExercise);
@@ -112,6 +125,7 @@ registerExercise(elapsedTimeExercise);
 
 // Money
 registerExercise(moneyCountingExercise);
+registerExercise(makingChangeExercise);
 
 // Patterns
 registerExercise(skipCountExercise);
@@ -122,6 +136,8 @@ registerExercise(missingNumberExercise);
 
 // Geometry
 registerExercise(shapesExercise);
+registerExercise(perimeterExercise);
+registerExercise(areaExercise);
 
 // Data
 registerExercise(barGraphExercise);

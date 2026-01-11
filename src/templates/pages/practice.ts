@@ -10,6 +10,8 @@ export function practicePage(token?: string): string {
       { id: "counting-recognize", title: "Recognize Numbers", desc: "Match quantities to numerals" },
       { id: "counting-objects", title: "Count Objects", desc: "Count various objects" },
       { id: "counting-compare", title: "Compare Quantities", desc: "Compare two groups" },
+      { id: "counting-odd-even", title: "Odd or Even", desc: "Identify odd and even numbers" },
+      { id: "counting-greater-less", title: "Greater, Less, Equal", desc: "Compare with >, <, =" },
     ]},
     { category: "Basic Operations", items: [
       { id: "basic-add-10", title: "Add Within 10", desc: "Simple addition facts" },
@@ -32,15 +34,18 @@ export function practicePage(token?: string): string {
     { category: "Division", items: [
       { id: "div-sharing", title: "Fair Sharing", desc: "Divide equally" },
       { id: "div-facts", title: "Division Facts", desc: "Division facts practice" },
+      { id: "div-remainders", title: "Remainders", desc: "Division with leftovers" },
     ]},
     { category: "Fractions", items: [
       { id: "frac-parts", title: "Parts of a Whole", desc: "Identify fractions" },
       { id: "frac-compare", title: "Compare Fractions", desc: "Which is greater?" },
       { id: "frac-equivalent", title: "Equivalent Fractions", desc: "Find equal fractions" },
+      { id: "frac-add-same", title: "Add Fractions", desc: "Same denominator" },
     ]},
     { category: "Decimals", items: [
       { id: "dec-tenths", title: "Tenths", desc: "Understand tenths" },
       { id: "dec-place-value", title: "Place Value", desc: "Decimal place values" },
+      { id: "dec-add", title: "Add Decimals", desc: "Add decimal numbers" },
     ]},
     { category: "Time", items: [
       { id: "time-hour-half", title: "Hour & Half Hour", desc: "Read clocks" },
@@ -48,6 +53,7 @@ export function practicePage(token?: string): string {
     ]},
     { category: "Money", items: [
       { id: "money-counting", title: "Counting Money", desc: "Count coins and bills" },
+      { id: "money-change", title: "Making Change", desc: "Calculate change" },
     ]},
     { category: "Patterns", items: [
       { id: "patterns-skip-2", title: "Skip Counting", desc: "Count by 2s, 5s, 10s" },
@@ -58,6 +64,8 @@ export function practicePage(token?: string): string {
     ]},
     { category: "Geometry", items: [
       { id: "geometry-shapes", title: "Identify Shapes", desc: "Name 2D shapes" },
+      { id: "geometry-perimeter", title: "Perimeter", desc: "Add all sides" },
+      { id: "geometry-area", title: "Area", desc: "Length × width" },
     ]},
     { category: "Data", items: [
       { id: "data-bar-graph", title: "Bar Graphs", desc: "Read bar graphs" },
