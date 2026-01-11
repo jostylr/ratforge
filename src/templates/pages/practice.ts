@@ -23,6 +23,7 @@ export function practicePage(token?: string): string {
       { id: "basic-word-problems", title: "Word Problems", desc: "Addition & subtraction stories" },
       { id: "basic-fact-families", title: "Fact Families", desc: "Related facts" },
       { id: "basic-tens-ones", title: "Tens and Ones", desc: "Place value basics" },
+      { id: "basic-mental", title: "Mental Math", desc: "Quick calculations" },
     ]},
     { category: "Regrouping", items: [
       { id: "regrouping-complements", title: "Complements of 10", desc: "Make 10 strategy" },
@@ -42,6 +43,7 @@ export function practicePage(token?: string): string {
       { id: "div-facts", title: "Division Facts", desc: "Division facts practice" },
       { id: "div-remainders", title: "Remainders", desc: "Division with leftovers" },
       { id: "div-word-problems", title: "Word Problems", desc: "Division stories" },
+      { id: "div-long", title: "Long Division", desc: "Divide larger numbers" },
     ]},
     { category: "Fractions", items: [
       { id: "frac-parts", title: "Parts of a Whole", desc: "Identify fractions" },
@@ -51,6 +53,8 @@ export function practicePage(token?: string): string {
       { id: "frac-sub-same", title: "Subtract Fractions", desc: "Same denominator" },
       { id: "frac-mixed", title: "Mixed Numbers", desc: "Convert to/from improper" },
       { id: "frac-number-line", title: "Number Line", desc: "Locate fractions" },
+      { id: "frac-simplify", title: "Simplify", desc: "Reduce to lowest terms" },
+      { id: "frac-add-diff", title: "Add (Different Denom)", desc: "Unlike denominators" },
     ]},
     { category: "Decimals", items: [
       { id: "dec-tenths", title: "Tenths", desc: "Understand tenths" },
@@ -58,6 +62,8 @@ export function practicePage(token?: string): string {
       { id: "dec-add", title: "Add Decimals", desc: "Add decimal numbers" },
       { id: "dec-compare", title: "Compare Decimals", desc: "Which is greater?" },
       { id: "dec-subtract", title: "Subtract Decimals", desc: "Subtract decimal numbers" },
+      { id: "dec-multiply", title: "Multiply Decimals", desc: "Multiply decimal numbers" },
+      { id: "dec-to-frac", title: "Decimal to Fraction", desc: "Convert decimals" },
     ]},
     { category: "Time", items: [
       { id: "time-hour-half", title: "Hour & Half Hour", desc: "Read clocks" },
@@ -78,6 +84,7 @@ export function practicePage(token?: string): string {
     { category: "Algebra", items: [
       { id: "algebra-missing", title: "Missing Number", desc: "Find the unknown" },
       { id: "algebra-solve", title: "Solve for X", desc: "Simple equations" },
+      { id: "algebra-order", title: "Order of Operations", desc: "PEMDAS practice" },
     ]},
     { category: "Geometry", items: [
       { id: "geometry-shapes", title: "Identify Shapes", desc: "Name 2D shapes" },
@@ -85,11 +92,13 @@ export function practicePage(token?: string): string {
       { id: "geometry-area", title: "Area", desc: "Length × width" },
       { id: "geometry-symmetry", title: "Symmetry", desc: "Lines of symmetry" },
       { id: "geometry-angles", title: "Angles", desc: "Right, acute, obtuse" },
+      { id: "geometry-3d", title: "3D Shapes", desc: "Cubes, spheres, cones" },
     ]},
     { category: "Data", items: [
       { id: "data-bar-graph", title: "Bar Graphs", desc: "Read bar graphs" },
       { id: "data-pictograph", title: "Pictographs", desc: "Read picture graphs" },
       { id: "data-tally", title: "Tally Charts", desc: "Read tally marks" },
+      { id: "data-mean-median", title: "Mean, Median, Range", desc: "Analyze data sets" },
     ]},
     { category: "Probability", items: [
       { id: "prob-coin", title: "Coin Flip", desc: "Basic probability" },
@@ -98,6 +107,7 @@ export function practicePage(token?: string): string {
     { category: "Measurement", items: [
       { id: "measure-length", title: "Measure Length", desc: "Use a ruler" },
       { id: "measure-weight", title: "Measure Weight", desc: "Read a scale" },
+      { id: "measure-capacity", title: "Capacity", desc: "Cups, pints, quarts, gallons" },
     ]},
     { category: "Place Value", items: [
       { id: "place-expanded", title: "Expanded Form", desc: "Hundreds, tens, ones" },

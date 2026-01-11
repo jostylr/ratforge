@@ -19,6 +19,7 @@ import { doublesExercise } from "./basic-operations/doubles";
 import { addSubWordProblemExercise } from "./basic-operations/word-problems";
 import { factFamilyExercise } from "./basic-operations/fact-families";
 import { tensOnesExercise } from "./basic-operations/tens-ones";
+import { mentalMathExercise } from "./basic-operations/mental-math";
 
 // Regrouping exercises
 import { complementsExercise } from "./regrouping/complements";
@@ -38,6 +39,7 @@ import { sharingExercise } from "./division/sharing";
 import { divisionFactsExercise } from "./division/facts";
 import { remainderExercise } from "./division/remainders";
 import { divWordProblemExercise } from "./division/word-problems";
+import { longDivisionExercise } from "./division/long-division";
 
 // Fractions exercises
 import { partsWholeExercise } from "./fractions/parts-whole";
@@ -47,6 +49,8 @@ import { addFractionsExercise } from "./fractions/add-same-denom";
 import { subtractFractionsExercise } from "./fractions/subtract-same-denom";
 import { mixedNumberExercise } from "./fractions/mixed-numbers";
 import { fractionNumberLineExercise } from "./fractions/number-line";
+import { simplifyFractionExercise } from "./fractions/simplify";
+import { addDiffDenomExercise } from "./fractions/add-different-denom";
 
 // Decimals exercises
 import { tenthsExercise } from "./decimals/tenths";
@@ -54,6 +58,8 @@ import { decimalPlaceValueExercise } from "./decimals/place-value";
 import { addDecimalsExercise } from "./decimals/add-decimals";
 import { compareDecimalsExercise } from "./decimals/compare-decimals";
 import { subtractDecimalsExercise } from "./decimals/subtract-decimals";
+import { multiplyDecimalsExercise } from "./decimals/multiply-decimals";
+import { decimalToFractionExercise } from "./decimals/decimal-to-fraction";
 
 // Time exercises
 import { hourHalfExercise } from "./time/hour-half";
@@ -74,6 +80,7 @@ import { numberPatternExercise } from "./patterns/number-patterns";
 // Algebra exercises
 import { missingNumberExercise } from "./algebra/missing-number";
 import { solveEquationExercise } from "./algebra/solve-equation";
+import { orderOperationsExercise } from "./algebra/order-operations";
 
 // Geometry exercises
 import { shapesExercise } from "./geometry/shapes";
@@ -81,11 +88,13 @@ import { perimeterExercise } from "./geometry/perimeter";
 import { areaExercise } from "./geometry/area";
 import { symmetryExercise } from "./geometry/symmetry";
 import { anglesExercise } from "./geometry/angles";
+import { shapes3DExercise } from "./geometry/3d-shapes";
 
 // Data exercises
 import { barGraphExercise } from "./data/bar-graph";
 import { pictographExercise } from "./data/pictograph";
 import { tallyChartExercise } from "./data/tally-chart";
+import { meanMedianExercise } from "./data/mean-median";
 
 // Probability exercises
 import { coinFlipExercise } from "./probability/coin-flip";
@@ -94,6 +103,7 @@ import { spinnerExercise } from "./probability/spinner";
 // Measurement exercises
 import { lengthExercise } from "./measurement/length";
 import { weightExercise } from "./measurement/weight";
+import { capacityExercise } from "./measurement/capacity";
 
 // Place value exercises
 import { expandedFormExercise } from "./place-value/expanded-form";
@@ -120,6 +130,7 @@ registerExercise(doublesExercise);
 registerExercise(addSubWordProblemExercise);
 registerExercise(factFamilyExercise);
 registerExercise(tensOnesExercise);
+registerExercise(mentalMathExercise);
 
 // Regrouping
 registerExercise(complementsExercise);
@@ -139,6 +150,7 @@ registerExercise(sharingExercise);
 registerExercise(divisionFactsExercise);
 registerExercise(remainderExercise);
 registerExercise(divWordProblemExercise);
+registerExercise(longDivisionExercise);
 
 // Fractions
 registerExercise(partsWholeExercise);
@@ -148,6 +160,8 @@ registerExercise(addFractionsExercise);
 registerExercise(subtractFractionsExercise);
 registerExercise(mixedNumberExercise);
 registerExercise(fractionNumberLineExercise);
+registerExercise(simplifyFractionExercise);
+registerExercise(addDiffDenomExercise);
 
 // Decimals
 registerExercise(tenthsExercise);
@@ -155,6 +169,8 @@ registerExercise(decimalPlaceValueExercise);
 registerExercise(addDecimalsExercise);
 registerExercise(compareDecimalsExercise);
 registerExercise(subtractDecimalsExercise);
+registerExercise(multiplyDecimalsExercise);
+registerExercise(decimalToFractionExercise);
 
 // Time
 registerExercise(hourHalfExercise);
@@ -175,6 +191,7 @@ registerExercise(numberPatternExercise);
 // Algebra
 registerExercise(missingNumberExercise);
 registerExercise(solveEquationExercise);
+registerExercise(orderOperationsExercise);
 
 // Geometry
 registerExercise(shapesExercise);
@@ -182,11 +199,13 @@ registerExercise(perimeterExercise);
 registerExercise(areaExercise);
 registerExercise(symmetryExercise);
 registerExercise(anglesExercise);
+registerExercise(shapes3DExercise);
 
 // Data
 registerExercise(barGraphExercise);
 registerExercise(pictographExercise);
 registerExercise(tallyChartExercise);
+registerExercise(meanMedianExercise);
 
 // Probability
 registerExercise(coinFlipExercise);
@@ -195,6 +214,7 @@ registerExercise(spinnerExercise);
 // Measurement
 registerExercise(lengthExercise);
 registerExercise(weightExercise);
+registerExercise(capacityExercise);
 
 // Place value
 registerExercise(expandedFormExercise);
