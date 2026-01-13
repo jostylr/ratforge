@@ -36,7 +36,7 @@ export function practicePage(token?: string): string {
     { category: "Multiplication", items: [
       { id: "mult-arrays", title: "Arrays", desc: "Visualize multiplication" },
       { id: "mult-tables", title: "Times Tables", desc: "Multiplication facts" },
-      { id: "mult-box", title: "Box Method", desc: "Area model multiplication" },
+      { id: "mult-box-intro", title: "Box Method", desc: "Area model multiplication" },
       { id: "mult-word-problems", title: "Word Problems", desc: "Real-world multiplication" },
       { id: "mult-properties", title: "Properties", desc: "Commutative, identity, zero" },
       { id: "mult-squares", title: "Square Numbers", desc: "Numbers times themselves" },
