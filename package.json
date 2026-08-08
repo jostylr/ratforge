@@ -16,6 +16,6 @@
     "typescript": "^5"
   },
   "dependencies": {
-    "@ratmath/core": "^0.2.0"
+    "@ratmath/core": "^0.3.0"
   }
 }

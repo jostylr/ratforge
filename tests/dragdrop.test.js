@@ -1,4 +1,8 @@
-import { describe, it, expect, beforeEach } from "bun:test";
+import { describe, it, expect, beforeAll, beforeEach, afterAll } from "bun:test";
+
+let originalWindow;
+let originalDocument;
+let DragDropManager;
 
 class FakeClassList {
   constructor() {
@@ -84,13 +88,24 @@ class FakeDocument {
   }
 }
 
-globalThis.window = {};
-globalThis.document = new FakeDocument();
-await import("../public/js/dragdrop.js");
-const DragDropManager = globalThis.window.DragDropManager;
+beforeAll(async () => {
+  originalWindow = globalThis.window;
+  originalDocument = globalThis.document;
+  globalThis.window = {};
+  globalThis.document = new FakeDocument();
+  await import("../public/js/dragdrop.js");
+  DragDropManager = globalThis.window.DragDropManager;
+});
 
 beforeEach(() => {
   globalThis.document = new FakeDocument();
+});
+
+afterAll(() => {
+  if (originalWindow === undefined) delete globalThis.window;
+  else globalThis.window = originalWindow;
+  if (originalDocument === undefined) delete globalThis.document;
+  else globalThis.document = originalDocument;
 });
 
 describe("DragDropManager", () => {
