@@ -1,5 +1,11 @@
 # RatForge Project Plan
 
+> Historical component design, classified 2026-09-19. This is not the active
+> RiX execution queue, and unchecked items are not verified missing features.
+> The umbrella `ratmath/WORK_PLAN.md` records legacy/support work under later
+> product-scope decisions. Maintain compatibility; do not start a second parser,
+> evaluator, or publishing architecture from this older plan.
+
 ## Overview
 
 This document outlines the implementation plan for RatForge, starting from project setup through a working first exercise (counting kittens). The plan is divided into phases, with each phase building on the previous.

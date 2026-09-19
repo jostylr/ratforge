@@ -1,5 +1,11 @@
 # RatForge Page Implementation Plan
 
+> Historical component design, classified 2026-09-19. This is not the active
+> RiX execution queue, and unchecked items are not verified missing features.
+> The umbrella `ratmath/WORK_PLAN.md` records legacy/support work under later
+> product-scope decisions. Maintain compatibility; do not start a second parser,
+> evaluator, or publishing architecture from this older plan.
+
 This document provides a detailed implementation plan for creating all pages based on math-plan.md. Each main heading becomes a **Table of Contents (TOC) page**, and each subitem becomes an **individual practice page**.
 
 ---
