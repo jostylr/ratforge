@@ -20,7 +20,7 @@ RatForge is a web-based platform for mastering arithmetic, progressing from coun
 ### Backend
 - **Runtime**: Bun (native SQLite, native HTTP server)
 - **Database**: SQLite (one file per user in `data/<user_id>/events.db`)
-- **Math Library**: [ratmath](https://github.com/jostylr/ratmath) for rational number operations
+- **Math Library**: [ratmath](https://github.com/ratmath/ratmath) for rational number operations
 
 ### Frontend
 - **Interactivity**: htmx (server-driven UI updates)
